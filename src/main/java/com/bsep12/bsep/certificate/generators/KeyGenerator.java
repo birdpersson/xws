@@ -6,7 +6,7 @@ public class KeyGenerator {
 	public KeyGenerator() {
 	}
 
-	public KeyPair generateKeys() {
+	public KeyPair generateKeyPair() {
 		try {
 			KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
 			SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
