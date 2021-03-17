@@ -16,7 +16,7 @@ public class CertificateDTO {
 	private String email;
 	private String serialNumber;
 	private String issuerSerialNumber;
-	//private boolean isCA;
+	private boolean isCA;
 
 	public CertificateDTO() {
 	}
@@ -93,4 +93,11 @@ public class CertificateDTO {
 		this.issuerSerialNumber = issuerSerialNumber;
 	}
 
+	public boolean isCA() {
+		return isCA;
+	}
+
+	public void setCA(boolean CA) {
+		isCA = CA;
+	}
 }
