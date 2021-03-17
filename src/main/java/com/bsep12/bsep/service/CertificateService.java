@@ -3,7 +3,7 @@ package com.bsep12.bsep.service;
 import com.bsep12.bsep.certificate.data.IssuerData;
 import com.bsep12.bsep.certificate.data.SubjectData;
 import com.bsep12.bsep.certificate.generators.CertificateGenerator;
-import com.bsep12.bsep.certificate.generators.KeyGenerator;
+import com.bsep12.bsep.certificate.keystores.KeyStoreReader;
 import com.bsep12.bsep.certificate.keystores.KeyStoreWriter;
 import com.bsep12.bsep.dto.CertificateDTO;
 import com.bsep12.bsep.model.Certificate;
@@ -11,41 +11,49 @@ import com.bsep12.bsep.repository.CertificateRepository;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.security.KeyPair;
-import java.security.PrivateKey;
+import java.security.*;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@Service
 public class CertificateService {
 
 	@Autowired
 	private CertificateRepository certificateRepository;
 
-	public void createCertificate(CertificateDTO certificateDTO) {
+	public void createCertificate(CertificateDTO certificateDTO, String uid) {
 
-		KeyGenerator kg = new KeyGenerator();
-		KeyPair keyPairSubject = kg.generateKeyPair();
-
+		KeyPair keyPairSubject = generateKeyPair();
 		Certificate certificate = new Certificate();
+
 		certificateRepository.save(certificate);
+		certificateDTO.setSerialNumber(certificate.getId().toString());
 
-		String sn = certificate.getId().toString();
-		certificateDTO.setSerialNumber(sn);
+		SubjectData subjectData = generateSubjectData(certificateDTO, keyPairSubject, uid);
+		IssuerData issuerData;
 
-		SubjectData subjectData = generateSubjectData(certificateDTO, keyPairSubject);
-		//TODO: certificate is self signed only
-		IssuerData issuerData = generateIssuerData(certificateDTO, keyPairSubject.getPrivate());
+		if (certificateDTO.getIssuerSerialNumber() == null)
+			issuerData = generateIssuerData(certificateDTO, keyPairSubject.getPrivate(), uid);
+		else {
+			KeyStoreReader ksr = new KeyStoreReader();
+			issuerData = ksr.readIssuerFromStore("keyStoreFile",
+					certificateDTO.getIssuerSerialNumber(), "password".toCharArray(), "keyPass".toCharArray());
+		}
 
 		CertificateGenerator cg = new CertificateGenerator();
-		X509Certificate cert = cg.generateCertificate(subjectData, issuerData);
+		X509Certificate cert = cg.generateCertificate(subjectData, issuerData, certificateDTO.isCA());
 
-		//TODO: write to keystore
+		System.out.println(cert);
+//		KeyStoreWriter ksw = new KeyStoreWriter();
+//		ksw.loadKeyStore("keyStoreFile.jks", "password".toCharArray());
+//		ksw.write(cert.getSerialNumber().toString(), keyPairSubject.getPrivate(), "password".toCharArray(), cert);
 	}
 
-	private IssuerData generateIssuerData(CertificateDTO certificate, PrivateKey issuerKey) {
+	private IssuerData generateIssuerData(CertificateDTO certificate, PrivateKey issuerKey, String uid) {
 		X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
 		builder.addRDN(BCStyle.CN, certificate.getCommonName());
 //		builder.addRDN(BCStyle.SURNAME, certificate.getSurName());
@@ -54,13 +62,12 @@ public class CertificateService {
 		builder.addRDN(BCStyle.OU, certificate.getOrganizationalUnitName());
 		builder.addRDN(BCStyle.C, certificate.getCountryName());
 		builder.addRDN(BCStyle.E, certificate.getEmail());
-		//TODO: UID (USER ID) je ID korisnika (from username)
-		builder.addRDN(BCStyle.UID, "654321");
+		builder.addRDN(BCStyle.UID, uid);
 
 		return new IssuerData(issuerKey, builder.build());
 	}
 
-	private SubjectData generateSubjectData(CertificateDTO certificate, KeyPair keyPairSubject) {
+	private SubjectData generateSubjectData(CertificateDTO certificate, KeyPair keyPairSubject, String uid) {
 		try {
 			SimpleDateFormat iso8601Formater = new SimpleDateFormat("yyyy-MM-dd");
 			Date startDate = iso8601Formater.parse(certificate.getStartDate());
@@ -75,11 +82,24 @@ public class CertificateService {
 			builder.addRDN(BCStyle.OU, certificate.getOrganizationalUnitName());
 			builder.addRDN(BCStyle.C, certificate.getCountryName());
 			builder.addRDN(BCStyle.E, certificate.getEmail());
-			//TODO: UID (USER ID) je ID korisnika (from username)
-			builder.addRDN(BCStyle.UID, "123456");
+			builder.addRDN(BCStyle.UID, uid);
 
 			return new SubjectData(keyPairSubject.getPublic(), builder.build(), sn, startDate, endDate);
 		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private KeyPair generateKeyPair() {
+		try {
+			KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+			SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+			keyGen.initialize(2048, random);
+			return keyGen.generateKeyPair();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (NoSuchProviderException e) {
 			e.printStackTrace();
 		}
 		return null;

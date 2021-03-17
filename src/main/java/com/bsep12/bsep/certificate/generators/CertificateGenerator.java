@@ -2,6 +2,9 @@ package com.bsep12.bsep.certificate.generators;
 
 import com.bsep12.bsep.certificate.data.IssuerData;
 import com.bsep12.bsep.certificate.data.SubjectData;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -19,7 +22,7 @@ public class CertificateGenerator {
 	public CertificateGenerator() {
 	}
 
-	public X509Certificate generateCertificate(SubjectData subjectData, IssuerData issuerData) {
+	public X509Certificate generateCertificate(SubjectData subjectData, IssuerData issuerData, boolean isCA) {
 		try {
 			JcaContentSignerBuilder builder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
 			builder = builder.setProvider("BC");
@@ -32,7 +35,14 @@ public class CertificateGenerator {
 					subjectData.getEndDate(),
 					subjectData.getX500name(),
 					subjectData.getPublicKey());
-			//TODO: check if isCA
+			//https://stackoverflow.com/questions/37751596/how-to-create-a-ca-certificate-in-java
+			// Extensions --------------------------
+
+			// Basic Constraint
+			BasicConstraints basicConstraints = new BasicConstraints(isCA); // <-- true for CA, false for EndEntity
+			certGen.addExtension(new ASN1ObjectIdentifier("2.5.29.19"), true, basicConstraints); // Basic Constraints is usually marked as critical.
+
+			// -------------------------------------
 
 			X509CertificateHolder certHolder = certGen.build(contentSigner);
 
@@ -49,6 +59,8 @@ public class CertificateGenerator {
 		} catch (OperatorCreationException e) {
 			e.printStackTrace();
 		} catch (CertificateException e) {
+			e.printStackTrace();
+		} catch (CertIOException e) {
 			e.printStackTrace();
 		}
 		return null;
