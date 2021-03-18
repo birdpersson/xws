@@ -40,17 +40,19 @@ public class CertificateService {
 			issuerData = generateIssuerData(certificateDTO, keyPairSubject.getPrivate(), uid);
 		else {
 			KeyStoreReader ksr = new KeyStoreReader();
-			issuerData = ksr.readIssuerFromStore("keyStoreFile",
-					certificateDTO.getIssuerSerialNumber(), "password".toCharArray(), "keyPass".toCharArray());
+			issuerData = ksr.readIssuerFromStore("test.jks",
+					certificateDTO.getIssuerSerialNumber(), "pass".toCharArray(), "pass".toCharArray());
 		}
 
 		CertificateGenerator cg = new CertificateGenerator();
 		X509Certificate cert = cg.generateCertificate(subjectData, issuerData, certificateDTO.isCA());
 
 		System.out.println(cert);
-//		KeyStoreWriter ksw = new KeyStoreWriter();
-//		ksw.loadKeyStore("keyStoreFile.jks", "password".toCharArray());
-//		ksw.write(cert.getSerialNumber().toString(), keyPairSubject.getPrivate(), "password".toCharArray(), cert);
+		KeyStoreWriter ksw = new KeyStoreWriter();
+//		ksw.loadKeyStore(null, "pass".toCharArray());
+		ksw.loadKeyStore("test.jks", "pass".toCharArray());
+		ksw.write(cert.getSerialNumber().toString(), keyPairSubject.getPrivate(), "pass".toCharArray(), cert);
+		ksw.saveKeyStore("test.jks", "pass".toCharArray());
 	}
 
 	private IssuerData generateIssuerData(CertificateDTO certificate, PrivateKey issuerKey, String uid) {
