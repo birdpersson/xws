@@ -29,7 +29,7 @@ public class CertificateController {
 	private CertificateService certificateService;
 
 	@PostMapping("/create")
-	public ResponseEntity<?> createCertificate(HttpServletRequest request, @RequestBody CertificateDTO certificateDTO) {
+	public ResponseEntity createCertificate(HttpServletRequest request, @RequestBody CertificateDTO certificateDTO) {
 		User u = (User) userService.loadUserByUsername(tokenUtils.getUsernameFromToken(tokenUtils.getToken(request)));
 		certificateService.createCertificate(certificateDTO, u.getId().toString());
 

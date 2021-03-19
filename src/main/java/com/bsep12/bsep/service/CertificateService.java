@@ -2,6 +2,7 @@ package com.bsep12.bsep.service;
 
 import com.bsep12.bsep.certificate.data.IssuerData;
 import com.bsep12.bsep.certificate.data.SubjectData;
+import com.bsep12.bsep.certificate.generators.CertToDtoConverter;
 import com.bsep12.bsep.certificate.generators.CertificateGenerator;
 import com.bsep12.bsep.certificate.keystores.KeyStoreReader;
 import com.bsep12.bsep.certificate.keystores.KeyStoreWriter;
@@ -17,13 +18,43 @@ import java.security.*;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class CertificateService {
 
 	@Autowired
 	private CertificateRepository certificateRepository;
+
+	public List<CertificateDTO> getAll() {
+		CertToDtoConverter cdc = new CertToDtoConverter();
+		List<CertificateDTO> dtos = new ArrayList<>();
+		List<Certificate> certificates = certificateRepository.findAll();
+		for (Certificate c : certificates) {
+			KeyStoreReader ksr = new KeyStoreReader();
+			X509Certificate cert = (X509Certificate) ksr.readCertificate(
+					"keystore.jks", "pass", c.getId().toString());
+			dtos.add(cdc.generateDtoFromCert(cert));
+		}
+		return dtos;
+	}
+
+	public List<CertificateDTO> getAllCa() {
+		CertToDtoConverter cdc = new CertToDtoConverter();
+		List<CertificateDTO> dtos = new ArrayList<>();
+		List<Certificate> certificates = certificateRepository.findAll();
+		for (Certificate c : certificates) {
+			KeyStoreReader ksr = new KeyStoreReader();
+			X509Certificate cert = (X509Certificate) ksr.readCertificate(
+					"keystore.jks", "pass", c.getId().toString());
+			//TODO: check if ca && valid
+			dtos.add(cdc.generateDtoFromCert(cert));
+		}
+		return dtos;
+	}
+
 
 	public void createCertificate(CertificateDTO certificateDTO, String uid) {
 
