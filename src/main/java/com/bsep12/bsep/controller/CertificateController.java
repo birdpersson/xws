@@ -36,4 +36,5 @@ public class CertificateController {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
+	//TODO: getAll, getAllCa, getBy{id}, @PreAuthorize("hasRole('ROLE_ADMIN')")revoke{id}, getRevoked{id}, getValid{id}
 }

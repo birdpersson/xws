@@ -50,13 +50,24 @@ public class CertificateService {
 			X509Certificate cert = (X509Certificate) ksr.readCertificate(
 					"keystore.jks", "pass", c.getId().toString());
 			//TODO: check if ca && valid
+			/*
+			isCa = cert.getBasicConstraints() != -1
+			if (isCa && isValid)
+			 */
 			dtos.add(cdc.generateDtoFromCert(cert));
 		}
 		return dtos;
 	}
 
+	//TODO: check dates
+	//TODO: revoke
+	//TODO: isValid (check dates && revoked)
+	//TODO: getById (use CertToDtoConverter)
+	//TODO: getKeys?
 
 	public void createCertificate(CertificateDTO certificateDTO, String uid) {
+		//TODO: do validation && check dates
+		//TODO: set uid to email if not root
 
 		KeyPair keyPairSubject = generateKeyPair();
 		Certificate certificate = new Certificate();
@@ -79,7 +90,7 @@ public class CertificateService {
 		X509Certificate cert = cg.generateCertificate(subjectData, issuerData, certificateDTO.isCa());
 
 		KeyStoreWriter ksw = new KeyStoreWriter();
-		ksw.loadKeyStore(null, "pass".toCharArray());
+		ksw.loadKeyStore(null, "pass".toCharArray()); //always gen new keystore (for testing only)
 //		ksw.loadKeyStore("keystore.jks", "pass".toCharArray());
 		ksw.write(cert.getSerialNumber().toString(), keyPairSubject.getPrivate(), "pass".toCharArray(), cert);
 		ksw.saveKeyStore("keystore.jks", "pass".toCharArray());

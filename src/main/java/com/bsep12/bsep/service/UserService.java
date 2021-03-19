@@ -12,18 +12,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+	@Autowired
+	private AuthenticationManager authenticationManager;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username);
-    }
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		return userRepository.findByUsername(username);
+	}
 
 }
