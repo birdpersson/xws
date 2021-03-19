@@ -6,17 +6,15 @@ public class CertificateDTO {
 	private String endDate;
 
 	private String commonName;
-	//private String surName;
-	//private String givenName;
 	private String organizationName;
 	private String organizationalUnitName;
 	private String countryName;
-	//private String stateOrProvinceName;
-	//private String locality;
 	private String email;
+	private boolean isCa;
+	private boolean isRoot;
+
 	private String serialNumber;
 	private String issuerSerialNumber;
-	private boolean isCA;
 
 	public CertificateDTO() {
 	}
@@ -77,6 +75,22 @@ public class CertificateDTO {
 		this.email = email;
 	}
 
+	public boolean isCa() {
+		return isCa;
+	}
+
+	public void setCa(boolean ca) {
+		isCa = ca;
+	}
+
+	public boolean isRoot() {
+		return isRoot;
+	}
+
+	public void setRoot(boolean root) {
+		isRoot = root;
+	}
+
 	public String getSerialNumber() {
 		return serialNumber;
 	}
@@ -93,11 +107,4 @@ public class CertificateDTO {
 		this.issuerSerialNumber = issuerSerialNumber;
 	}
 
-	public boolean isCA() {
-		return isCA;
-	}
-
-	public void setCA(boolean CA) {
-		isCA = CA;
-	}
 }

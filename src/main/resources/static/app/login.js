@@ -1,14 +1,14 @@
 Vue.component("login", {
-	data: function () {
-		return {
-			user: {
-				username: "",
-				password: ""
-			},
-			error: false,
-		};
-	},
-	template: `
+  data: function () {
+    return {
+      user: {
+        username: "",
+        password: ""
+      },
+      error: false,
+    };
+  },
+  template: `
 <div id="login">
   <div class="container-fluid">
     <div class="row no-gutter">
@@ -61,36 +61,37 @@ Vue.component("login", {
   </div>
 </div>
 `
-	,
-	methods: {
-		login: function (user) {
-			axios
-				.post("http://localhost:8080/auth/login", {
-					username: user.username,
-					password: user.password,
-				})
-				.then(Response => this.loginSuccessful(Response.data))
-				.catch(() => this.loginFailed())
-		},
-		loginSuccessful: function (data) {
-			if (!data.accessToken) {
-				this.loginFailed();
-				return;
-			}
-			localStorage.setItem("accessToken", JSON.stringify(data.accessToken));
-			axios.defaults.headers.common["Authorization"] = "Bearer " + localStorage.getItem("accessToken");
-			this.error = false;
-			this.$router.push("/");
-		},
-		loginFailed: function () {
-			localStorage.removeItem("accessToken");
-			this.error = true;
-			setTimeout(() => (this.error = false), 3000);
-		},
-	},
-	created() {
-		if (localStorage.getItem("accessToken")) {
-			this.$router.push("/");
-		}
-	},
-})
+  ,
+  methods: {
+    login: function (user) {
+      axios
+        .post("auth/login", {
+          username: user.username,
+          password: user.password,
+        })
+        .then(Response => this.loginSuccessful(Response.data))
+        .catch(() => this.loginFailed());
+    },
+    loginSuccessful: function (data) {
+      if (!data.accessToken) {
+        this.loginFailed();
+        return;
+      }
+      localStorage.setItem("accessToken", (data.accessToken));
+      window.location.reload(); //refresh Authorization Bearer with new token
+
+      this.error = false;
+      this.$router.push("/");
+    },
+    loginFailed: function () {
+      localStorage.removeItem("accessToken");
+      this.error = true;
+      setTimeout(() => (this.error = false), 3000);
+    },
+  },
+  created() {
+    if (localStorage.getItem("accessToken")) {
+      this.$router.push("/");
+    }
+  },
+});

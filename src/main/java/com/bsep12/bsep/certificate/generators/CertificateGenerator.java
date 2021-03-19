@@ -22,7 +22,7 @@ public class CertificateGenerator {
 	public CertificateGenerator() {
 	}
 
-	public X509Certificate generateCertificate(SubjectData subjectData, IssuerData issuerData, boolean isCA) {
+	public X509Certificate generateCertificate(SubjectData subjectData, IssuerData issuerData, boolean isCa) {
 		try {
 			JcaContentSignerBuilder builder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
 			builder = builder.setProvider("BC");
@@ -35,14 +35,9 @@ public class CertificateGenerator {
 					subjectData.getEndDate(),
 					subjectData.getX500name(),
 					subjectData.getPublicKey());
-			//https://stackoverflow.com/questions/37751596/how-to-create-a-ca-certificate-in-java
-			// Extensions --------------------------
 
-			// Basic Constraint
-			BasicConstraints basicConstraints = new BasicConstraints(isCA); // <-- true for CA, false for EndEntity
-			certGen.addExtension(new ASN1ObjectIdentifier("2.5.29.19"), true, basicConstraints); // Basic Constraints is usually marked as critical.
-
-			// -------------------------------------
+			BasicConstraints basicConstraints = new BasicConstraints(isCa); // <-- true for CA, false for EndEntity
+			certGen.addExtension(new ASN1ObjectIdentifier("2.5.29.19"), true, basicConstraints);
 
 			X509CertificateHolder certHolder = certGen.build(contentSigner);
 

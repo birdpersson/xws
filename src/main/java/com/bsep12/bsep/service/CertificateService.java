@@ -25,7 +25,7 @@ public class CertificateService {
 	@Autowired
 	private CertificateRepository certificateRepository;
 
-	public void createCertificate(CertificateDTO certificateDTO, String uid) {
+	public X509Certificate createCertificate(CertificateDTO certificateDTO, String uid) {
 
 		KeyPair keyPairSubject = generateKeyPair();
 		Certificate certificate = new Certificate();
@@ -36,30 +36,30 @@ public class CertificateService {
 		SubjectData subjectData = generateSubjectData(certificateDTO, keyPairSubject, uid);
 		IssuerData issuerData;
 
-		if (certificateDTO.getIssuerSerialNumber() == null)
+		if (certificateDTO.isRoot())
 			issuerData = generateIssuerData(certificateDTO, keyPairSubject.getPrivate(), uid);
 		else {
 			KeyStoreReader ksr = new KeyStoreReader();
-			issuerData = ksr.readIssuerFromStore("test.jks",
+			issuerData = ksr.readIssuerFromStore("keystore.jks",
 					certificateDTO.getIssuerSerialNumber(), "pass".toCharArray(), "pass".toCharArray());
 		}
 
 		CertificateGenerator cg = new CertificateGenerator();
-		X509Certificate cert = cg.generateCertificate(subjectData, issuerData, certificateDTO.isCA());
+		X509Certificate cert = cg.generateCertificate(subjectData, issuerData, certificateDTO.isCa());
+
+		KeyStoreWriter ksw = new KeyStoreWriter();
+		ksw.loadKeyStore(null, "pass".toCharArray());
+//		ksw.loadKeyStore("keystore.jks", "pass".toCharArray());
+		ksw.write(cert.getSerialNumber().toString(), keyPairSubject.getPrivate(), "pass".toCharArray(), cert);
+		ksw.saveKeyStore("keystore.jks", "pass".toCharArray());
 
 		System.out.println(cert);
-		KeyStoreWriter ksw = new KeyStoreWriter();
-//		ksw.loadKeyStore(null, "pass".toCharArray());
-		ksw.loadKeyStore("test.jks", "pass".toCharArray());
-		ksw.write(cert.getSerialNumber().toString(), keyPairSubject.getPrivate(), "pass".toCharArray(), cert);
-		ksw.saveKeyStore("test.jks", "pass".toCharArray());
+		return cert;
 	}
 
 	private IssuerData generateIssuerData(CertificateDTO certificate, PrivateKey issuerKey, String uid) {
 		X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
 		builder.addRDN(BCStyle.CN, certificate.getCommonName());
-//		builder.addRDN(BCStyle.SURNAME, certificate.getSurName());
-//		builder.addRDN(BCStyle.GIVENNAME, certificate.getGivenName());
 		builder.addRDN(BCStyle.O, certificate.getOrganizationName());
 		builder.addRDN(BCStyle.OU, certificate.getOrganizationalUnitName());
 		builder.addRDN(BCStyle.C, certificate.getCountryName());
@@ -78,8 +78,6 @@ public class CertificateService {
 			String sn = certificate.getSerialNumber();
 			X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
 			builder.addRDN(BCStyle.CN, certificate.getCommonName());
-//		    builder.addRDN(BCStyle.SURNAME, certificate.getSurName());
-//		    builder.addRDN(BCStyle.GIVENNAME, certificate.getGivenName());
 			builder.addRDN(BCStyle.O, certificate.getOrganizationName());
 			builder.addRDN(BCStyle.OU, certificate.getOrganizationalUnitName());
 			builder.addRDN(BCStyle.C, certificate.getCountryName());
