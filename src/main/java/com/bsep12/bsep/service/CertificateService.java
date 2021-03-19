@@ -25,7 +25,7 @@ public class CertificateService {
 	@Autowired
 	private CertificateRepository certificateRepository;
 
-	public X509Certificate createCertificate(CertificateDTO certificateDTO, String uid) {
+	public void createCertificate(CertificateDTO certificateDTO, String uid) {
 
 		KeyPair keyPairSubject = generateKeyPair();
 		Certificate certificate = new Certificate();
@@ -54,7 +54,6 @@ public class CertificateService {
 		ksw.saveKeyStore("keystore.jks", "pass".toCharArray());
 
 		System.out.println(cert);
-		return cert;
 	}
 
 	private IssuerData generateIssuerData(CertificateDTO certificate, PrivateKey issuerKey, String uid) {

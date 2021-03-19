@@ -33,43 +33,43 @@ Vue.component("create", {
 
                   <div class="form-label-group">
                     <b>Enter common name</b>
-                    <input v-model="certificate.commonName" class="form-control" required autofocus>
+                    <input v-model="certificate.commonName" class="form-control">
                     <br>
                   </div>
 
                   <div class="form-label-group">
                     <b>Enter organization name</b>
-                    <input v-model="certificate.organizationName" class="form-control" required autofocus>
+                    <input v-model="certificate.organizationName" class="form-control">
                     <br>
                   </div>
 
                   <div class="form-label-group">
                     <b>Enter organizational unit name</b>
-                    <input v-model="certificate.organizationalUnitName" class="form-control" required autofocus>
+                    <input v-model="certificate.organizationalUnitName" class="form-control">
                     <br>
                   </div>
 
                   <div class="form-label-group">
                     <b>Enter country name</b>
-                    <input v-model="certificate.countryName" class="form-control" required autofocus>
+                    <input v-model="certificate.countryName" class="form-control">
                     <br>
                   </div>
 
                   <div class="form-label-group">
                     <b>Enter email address</b>
-                    <input v-model="certificate.email" class="form-control" required autofocus>
+                    <input v-model="certificate.email" class="form-control">
                     <br>
                   </div>
 
                   <div class="form-label-group">
                     <b>Enter start date</b>
-                    <input v-model="certificate.startDate" type="date" class="form-control" required autofocus>
+                    <input v-model="certificate.startDate" type="date" class="form-control">
                     <br>
                   </div>
 
                   <div class="form-label-group">
                     <b>Enter end date</b>
-                    <input v-model="certificate.endDate" type="date" class="form-control" required autofocus>
+                    <input v-model="certificate.endDate" type="date" class="form-control">
                     <br>
                   </div>
 
