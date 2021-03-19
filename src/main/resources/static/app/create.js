@@ -10,10 +10,10 @@ Vue.component("create", {
         organizationalUnitName: "",
         countryName: "",
         email: "",
+        ca: false,
+        root: false,
 
         issuerSerialNumber: null,
-        isRoot: false,
-        isCA: true,
       },
       error: false,
     };
@@ -74,11 +74,11 @@ Vue.component("create", {
                   </div>
 
                   <b>Certificate Authority</b>
-                  <input v-model="certificate.isCA" type="checkbox">
+                  <input v-model="certificate.ca" type="checkbox">
                   <br>
 
                   <b>Self signed (Root)</b>
-                  <input v-model="certificate.isRoot" type="checkbox">
+                  <input v-model="certificate.root" type="checkbox">
                   <br>
 
                   <div class="form-label-group">
