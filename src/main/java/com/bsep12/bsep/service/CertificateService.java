@@ -9,16 +9,13 @@ import com.bsep12.bsep.certificate.keystores.KeyStoreWriter;
 import com.bsep12.bsep.dto.CertificateDTO;
 import com.bsep12.bsep.model.Certificate;
 import com.bsep12.bsep.repository.CertificateRepository;
-import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.bouncycastle.asn1.x500.style.IETFUtils;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.Convert;
 import java.security.*;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -72,16 +69,16 @@ public class CertificateService {
 	//TODO: getById (use CertToDtoConverter)
 	//TODO: getKeys?
 
-	public CertificateDTO getById(String id){
+	public CertificateDTO getById(String id) {
 		CertToDtoConverter cdc = new CertToDtoConverter();
 		KeyStoreReader ksr = new KeyStoreReader();
 		X509Certificate cert = (X509Certificate) ksr.readCertificate(
 				"keystore.jks", "pass", id);
-		CertificateDTO dto=cdc.generateDtoFromCert(cert);
+		CertificateDTO dto = cdc.generateDtoFromCert(cert);
 		return dto;
 	}
 
-	public void revokeCertificate(String id){
+	public void revokeCertificate(String id) {
 		try {
 			KeyStoreReader ksr = new KeyStoreReader();
 			Certificate certificate = certificateRepository.findById(Long.parseLong(id)).orElse(null);
@@ -106,6 +103,7 @@ public class CertificateService {
 		}
 
 	}
+
 	public void createCertificate(CertificateDTO certificateDTO, String uid) {
 		//TODO: do validation && check dates
 		//TODO: set uid to email if not root
@@ -125,9 +123,9 @@ public class CertificateService {
 			else {
 				String lastCertId = Long.toString(certificate.getId());
 
-				if(!checkDates("keystore.jks", "pass", lastCertId, certificateDTO.getIssuerSerialNumber()) ||
-				!checkIfIssuerCA("keystore.jks", "pass", certificateDTO.getIssuerSerialNumber()) ||
-				!checkRevoked("keystore.jks", "pass", certificateDTO.getIssuerSerialNumber()))
+				if (!checkDates("keystore.jks", "pass", lastCertId, certificateDTO.getIssuerSerialNumber()) ||
+						!checkIfIssuerCA("keystore.jks", "pass", certificateDTO.getIssuerSerialNumber()) ||
+						!checkRevoked("keystore.jks", "pass", certificateDTO.getIssuerSerialNumber()))
 					return;
 
 				KeyStoreReader ksr = new KeyStoreReader();
@@ -208,7 +206,7 @@ public class CertificateService {
 		return null;
 	}
 
-	private boolean checkDates (String file, String pass, String lastId, String issuerId){
+	private boolean checkDates(String file, String pass, String lastId, String issuerId) {
 		KeyStoreReader ksr = new KeyStoreReader();
 		X509Certificate cert = (X509Certificate) ksr.readCertificate(file, pass, lastId);
 		X509Certificate cert2 = (X509Certificate) ksr.readCertificate(file, pass, issuerId);
@@ -219,30 +217,30 @@ public class CertificateService {
 		Date startDate2 = cert2.getNotBefore();
 		Date endDate2 = cert2.getNotAfter();
 
-		if(startDate.after(startDate2) && endDate.before(endDate2))
+		if (startDate.after(startDate2) && endDate.before(endDate2))
 			return true;
 		return false;
 	}
 
-	private boolean checkIfIssuerCA(String file, String pass, String issuerId){
+	private boolean checkIfIssuerCA(String file, String pass, String issuerId) {
 		KeyStoreReader ksr = new KeyStoreReader();
 		X509Certificate cert = (X509Certificate) ksr.readCertificate(file, pass, issuerId);
-		if(cert.getBasicConstraints() != -1)
+		if (cert.getBasicConstraints() != -1)
 			return true;
 		return false;
 	}
 
-	public boolean checkRevoked(String file, String pass, String id){
+	public boolean checkRevoked(String file, String pass, String id) {
 		KeyStoreReader ksr = new KeyStoreReader();
 
 		X509Certificate cert = (X509Certificate) ksr.readCertificate(file, pass, id);
 		Certificate certificate = certificateRepository.findById(Long.parseLong(id)).orElse(null);
 		CertToDtoConverter cdc = new CertToDtoConverter();
 		CertificateDTO dto = cdc.generateDtoFromCert(cert);
-		if(certificate.isRevoked())
+		if (certificate.isRevoked())
 			return false;
 
-		if(dto.getIssuerSerialNumber() != null)
+		if (dto.getIssuerSerialNumber() != null)
 			checkRevoked(file, pass, dto.getIssuerSerialNumber());
 
 		return true;
