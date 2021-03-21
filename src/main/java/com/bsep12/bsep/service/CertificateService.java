@@ -9,12 +9,18 @@ import com.bsep12.bsep.certificate.keystores.KeyStoreWriter;
 import com.bsep12.bsep.dto.CertificateDTO;
 import com.bsep12.bsep.model.Certificate;
 import com.bsep12.bsep.repository.CertificateRepository;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x500.style.IETFUtils;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Convert;
 import java.security.*;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -65,6 +71,40 @@ public class CertificateService {
 	//TODO: getById (use CertToDtoConverter)
 	//TODO: getKeys?
 
+	public CertificateDTO getById(String id){
+		CertToDtoConverter cdc = new CertToDtoConverter();
+		KeyStoreReader ksr = new KeyStoreReader();
+		X509Certificate cert = (X509Certificate) ksr.readCertificate(
+				"keystore.jks", "pass", id);
+		CertificateDTO dto=cdc.generateDtoFromCert(cert);
+		return dto;
+	}
+
+	public void revokeCertificate(String id){
+		try {
+			KeyStoreReader ksr = new KeyStoreReader();
+			Certificate certificate = certificateRepository.findById(Long.parseLong(id)).orElse(null);
+			certificate.setRevoked(true);
+			certificateRepository.save(certificate);
+			X509Certificate cert = (X509Certificate) ksr.readCertificate(
+					"keystore.jks", "pass", id);
+			X500Name subjectName = new JcaX509CertificateHolder(cert).getSubject();
+			List<CertificateDTO> dtos = getAll();
+			for (CertificateDTO dto : dtos) {
+				X509Certificate certCheck = (X509Certificate) ksr.readCertificate(
+						"keystore.jks", "pass", dto.getSerialNumber());
+				X500Name issuerName = new JcaX509CertificateHolder(certCheck).getIssuer();
+				if (issuerName.equals(subjectName)) {
+					System.out.println(dto.getSerialNumber() + "Number");
+					revokeCertificate(dto.getSerialNumber());
+				}
+			}
+
+		} catch (CertificateEncodingException e) {
+			e.printStackTrace();
+		}
+
+	}
 	public void createCertificate(CertificateDTO certificateDTO, String uid) {
 		//TODO: do validation && check dates
 		//TODO: set uid to email if not root
@@ -91,7 +131,7 @@ public class CertificateService {
 
 		KeyStoreWriter ksw = new KeyStoreWriter();
 		ksw.loadKeyStore(null, "pass".toCharArray()); //always gen new keystore (for testing only)
-//		ksw.loadKeyStore("keystore.jks", "pass".toCharArray());
+		//ksw.loadKeyStore("keystore.jks", "pass".toCharArray());
 		ksw.write(cert.getSerialNumber().toString(), keyPairSubject.getPrivate(), "pass".toCharArray(), cert);
 		ksw.saveKeyStore("keystore.jks", "pass".toCharArray());
 
