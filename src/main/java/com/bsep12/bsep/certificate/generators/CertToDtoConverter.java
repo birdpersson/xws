@@ -41,6 +41,9 @@ public class CertToDtoConverter {
 			if(issuerName.equals(subjectName))
 				root=true;
 
+			RDN icn=issuerName.getRDNs(BCStyle.CN)[0];
+			String issuerCommonName=IETFUtils.valueToString(icn.getFirst().getValue());
+
 			CertificateDTO dto = new CertificateDTO();
 
 			dto.setStartDate(startDate);
@@ -53,6 +56,7 @@ public class CertToDtoConverter {
 			dto.setEmail(email);
 			dto.setCa(ca);
 			dto.setRoot(root);
+			dto.setIssuerCommonName(issuerCommonName);
 
 			dto.setSerialNumber(serialNumber);
 

@@ -16,6 +16,7 @@ public class CertificateDTO {
 
 	private String serialNumber;
 	private String issuerSerialNumber;
+	private String issuerCommonName;
 
 	public CertificateDTO() {
 	}
@@ -114,6 +115,14 @@ public class CertificateDTO {
 
 	public void setIssuerSerialNumber(String issuerSerialNumber) {
 		this.issuerSerialNumber = issuerSerialNumber;
+	}
+
+	public String getIssuerCommonName() {
+		return issuerCommonName;
+	}
+
+	public void setIssuerCommonName(String issuerCommonName) {
+		this.issuerCommonName = issuerCommonName;
 	}
 
 }

@@ -11,6 +11,7 @@ Vue.component("certificate_table", {
                 '<th>Email</th>' +
                 '<th>Start Date</th>' +
                 '<th>End Date</th>' +
+                '<th>Issuer Name</th>'+
                 '<th>Is Revoked</th>' +
                 '<th>Revoke</th>' +
             '</thead>' +
@@ -20,6 +21,7 @@ Vue.component("certificate_table", {
                     '<td>{{item.email}}</td>' +
                     '<td>{{item.startDate}}</td>' +
                     '<td>{{item.endDate}}</td>' +
+                    '<td>{{item.issuerCommonName}}</td>' +
                     '<td>{{item.revoked}}</td>' +
                     '<td><button type="submit" v-on:click="revoke(item.serialNumber)">Revoke</button></td>' +
                 '</tr>' +
