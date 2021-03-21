@@ -15,6 +15,7 @@ Vue.component("create", {
 
         issuerSerialNumber: null,
       },
+      certificates: [],
       error: false,
     };
   },
@@ -81,10 +82,12 @@ Vue.component("create", {
                   <input v-model="certificate.root" type="checkbox">
                   <br>
 
-                  <div class="form-label-group">
+                  <div v-show="!certificate.root" class="form-label-group">
                     <b>Choose issuer</b>
-                    <select>
-
+                    <select v-model="certificate.issuerSerialNumber">
+                      <option v-for="item in certificates" :value="item.serialNumber">
+                        {{item.commonName}}
+                      </option>
                     </select>
                     <br>
                   </div>
@@ -110,5 +113,19 @@ Vue.component("create", {
         .post("cert/create", this.certificate)
         .then(Response => { console.log(Response) });
     },
+
+    arrange() {
+      for (let i = 0; i < this.certificates.length; i++) {
+        this.names.push(this.certificates[i].issuerCommonName);
+      }
+    },
+  },
+  created() {
+    axios
+      .get("cert/ca")
+      .then(Response => {
+        this.certificates = Response.data;
+        console.log(this.certificates);
+      });
   },
 });
