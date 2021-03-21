@@ -36,6 +36,11 @@ public class CertToDtoConverter {
 			boolean ca = cert.getBasicConstraints() != -1;
 			String serialNumber = cert.getSerialNumber().toString();
 
+			X500Name issuerName = new JcaX509CertificateHolder(cert).getIssuer();
+			boolean root=false;
+			if(issuerName.equals(subjectName))
+				root=true;
+
 			CertificateDTO dto = new CertificateDTO();
 
 			dto.setStartDate(startDate);
@@ -47,6 +52,7 @@ public class CertToDtoConverter {
 			dto.setCountryName(countryName);
 			dto.setEmail(email);
 			dto.setCa(ca);
+			dto.setRoot(root);
 
 			dto.setSerialNumber(serialNumber);
 

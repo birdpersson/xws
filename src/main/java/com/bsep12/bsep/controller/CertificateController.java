@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/cert")
@@ -39,11 +40,16 @@ public class CertificateController {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
-	@PutMapping("/revok")
-	public ResponseEntity createCertificate(HttpServletRequest request, String id) {
-		certificateService.revokeCertificate("2");
+	@PutMapping("/revoke/{id}")
+	public ResponseEntity createCertificate(HttpServletRequest request,@PathVariable String id) {
+		certificateService.revokeCertificate(id);
 
 		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@GetMapping("/all")
+	public  ResponseEntity<List<CertificateDTO>> getAll(HttpServletRequest request){
+		return new ResponseEntity<List<CertificateDTO>>(certificateService.getAll(),HttpStatus.OK);
 	}
 	//TODO: getAll, getAllCa, getBy{id}, @PreAuthorize("hasRole('ROLE_ADMIN')")revoke{id}, getRevoked{id}, getValid{id}
 }

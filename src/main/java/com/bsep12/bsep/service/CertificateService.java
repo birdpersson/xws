@@ -38,12 +38,15 @@ public class CertificateService {
 	public List<CertificateDTO> getAll() {
 		CertToDtoConverter cdc = new CertToDtoConverter();
 		List<CertificateDTO> dtos = new ArrayList<>();
+		CertificateDTO dto= new CertificateDTO();
 		List<Certificate> certificates = certificateRepository.findAll();
 		for (Certificate c : certificates) {
 			KeyStoreReader ksr = new KeyStoreReader();
 			X509Certificate cert = (X509Certificate) ksr.readCertificate(
 					"keystore.jks", "pass", c.getId().toString());
-			dtos.add(cdc.generateDtoFromCert(cert));
+			dto=cdc.generateDtoFromCert(cert);
+			dto.setRevoked(c.isRevoked());
+			dtos.add(dto);
 		}
 		return dtos;
 	}
@@ -96,7 +99,10 @@ public class CertificateService {
 						"keystore.jks", "pass", dto.getSerialNumber());
 				X500Name issuerName = new JcaX509CertificateHolder(certCheck).getIssuer();
 				if (issuerName.equals(subjectName)) {
+					if(dto.isRoot())
+						continue;
 					System.out.println(dto.getSerialNumber() + "Number");
+
 					revokeCertificate(dto.getSerialNumber());
 				}
 			}

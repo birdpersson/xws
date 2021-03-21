@@ -12,6 +12,7 @@ public class CertificateDTO {
 	private String email;
 	private boolean isCa;
 	private boolean isRoot;
+	private boolean isRevoked;
 
 	private String serialNumber;
 	private String issuerSerialNumber;
@@ -89,6 +90,14 @@ public class CertificateDTO {
 
 	public void setRoot(boolean root) {
 		isRoot = root;
+	}
+
+	public boolean isRevoked() {
+		return isRevoked;
+	}
+
+	public void setRevoked(boolean revoked) {
+		isRevoked = revoked;
 	}
 
 	public String getSerialNumber() {
