@@ -85,7 +85,8 @@ public class CertificateService {
 			else {
 				String lastCertId = Long.toString(certificate.getId());
 
-				if(!checkDates("keystore.jks", "pass", lastCertId, certificateDTO.getIssuerSerialNumber()))
+				if(!checkDates("keystore.jks", "pass", lastCertId, certificateDTO.getIssuerSerialNumber()) &&
+				!checkIfIssuerCA(certificateDTO.getIssuerSerialNumber()))
 					return;
 
 				KeyStoreReader ksr = new KeyStoreReader();
@@ -182,9 +183,12 @@ public class CertificateService {
 		return false;
 	}
 
-//	private boolean checkRevoked(){
-//		List<Certificate> c = certificateRepository.findAll();
-//		for()
-//	}
+	private boolean checkIfIssuerCA(String issuerId){
+		KeyStoreReader ksr = new KeyStoreReader();
+		X509Certificate cert = (X509Certificate) ksr.readCertificate(file, pass, issuerId);
+		if(cert.getBasicConstraints() != -1)
+			return true;
+		return false;
+	}
 
 }
