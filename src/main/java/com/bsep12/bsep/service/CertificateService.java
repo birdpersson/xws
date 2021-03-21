@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.Convert;
 import java.security.*;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -109,33 +110,54 @@ public class CertificateService {
 		//TODO: do validation && check dates
 		//TODO: set uid to email if not root
 
-		KeyPair keyPairSubject = generateKeyPair();
-		Certificate certificate = new Certificate();
+		try {
+			KeyPair keyPairSubject = generateKeyPair();
+			Certificate certificate = new Certificate();
 
-		certificateRepository.save(certificate);
-		certificateDTO.setSerialNumber(certificate.getId().toString());
+			certificateRepository.save(certificate);
+			certificateDTO.setSerialNumber(certificate.getId().toString());
 
-		SubjectData subjectData = generateSubjectData(certificateDTO, keyPairSubject, uid);
-		IssuerData issuerData;
+			SubjectData subjectData = generateSubjectData(certificateDTO, keyPairSubject, uid);
+			IssuerData issuerData;
 
-		if (certificateDTO.isRoot())
-			issuerData = generateIssuerData(certificateDTO, keyPairSubject.getPrivate(), uid);
-		else {
-			KeyStoreReader ksr = new KeyStoreReader();
-			issuerData = ksr.readIssuerFromStore("keystore.jks",
-					certificateDTO.getIssuerSerialNumber(), "pass".toCharArray(), "pass".toCharArray());
+			if (certificateDTO.isRoot())
+				issuerData = generateIssuerData(certificateDTO, keyPairSubject.getPrivate(), uid);
+			else {
+				String lastCertId = Long.toString(certificate.getId());
+
+				if(!checkDates("keystore.jks", "pass", lastCertId, certificateDTO.getIssuerSerialNumber()) ||
+				!checkIfIssuerCA("keystore.jks", "pass", certificateDTO.getIssuerSerialNumber()) ||
+				!checkRevoked("keystore.jks", "pass", certificateDTO.getIssuerSerialNumber()))
+					return;
+
+				KeyStoreReader ksr = new KeyStoreReader();
+				issuerData = ksr.readIssuerFromStore("keystore.jks",
+						certificateDTO.getIssuerSerialNumber(), "pass".toCharArray(), "pass".toCharArray());
+			}
+
+			CertificateGenerator cg = new CertificateGenerator();
+			X509Certificate cert = cg.generateCertificate(subjectData, issuerData, certificateDTO.isCa());
+
+			cert.verify(keyPairSubject.getPublic());
+
+			KeyStoreWriter ksw = new KeyStoreWriter();
+			ksw.loadKeyStore(null, "pass".toCharArray()); //always gen new keystore (for testing only)
+//		ksw.loadKeyStore("keystore.jks", "pass".toCharArray());
+			ksw.write(cert.getSerialNumber().toString(), keyPairSubject.getPrivate(), "pass".toCharArray(), cert);
+			ksw.saveKeyStore("keystore.jks", "pass".toCharArray());
+
+			System.out.println(cert);
+		} catch (CertificateException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			e.printStackTrace();
+		} catch (NoSuchProviderException e) {
+			e.printStackTrace();
+		} catch (SignatureException e) {
+			e.printStackTrace();
 		}
-
-		CertificateGenerator cg = new CertificateGenerator();
-		X509Certificate cert = cg.generateCertificate(subjectData, issuerData, certificateDTO.isCa());
-
-		KeyStoreWriter ksw = new KeyStoreWriter();
-		ksw.loadKeyStore(null, "pass".toCharArray()); //always gen new keystore (for testing only)
-		//ksw.loadKeyStore("keystore.jks", "pass".toCharArray());
-		ksw.write(cert.getSerialNumber().toString(), keyPairSubject.getPrivate(), "pass".toCharArray(), cert);
-		ksw.saveKeyStore("keystore.jks", "pass".toCharArray());
-
-		System.out.println(cert);
 	}
 
 	private IssuerData generateIssuerData(CertificateDTO certificate, PrivateKey issuerKey, String uid) {
@@ -184,6 +206,46 @@ public class CertificateService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private boolean checkDates (String file, String pass, String lastId, String issuerId){
+		KeyStoreReader ksr = new KeyStoreReader();
+		X509Certificate cert = (X509Certificate) ksr.readCertificate(file, pass, lastId);
+		X509Certificate cert2 = (X509Certificate) ksr.readCertificate(file, pass, issuerId);
+
+		Date startDate = cert.getNotBefore();
+		Date endDate = cert.getNotAfter();
+
+		Date startDate2 = cert2.getNotBefore();
+		Date endDate2 = cert2.getNotAfter();
+
+		if(startDate.after(startDate2) && endDate.before(endDate2))
+			return true;
+		return false;
+	}
+
+	private boolean checkIfIssuerCA(String file, String pass, String issuerId){
+		KeyStoreReader ksr = new KeyStoreReader();
+		X509Certificate cert = (X509Certificate) ksr.readCertificate(file, pass, issuerId);
+		if(cert.getBasicConstraints() != -1)
+			return true;
+		return false;
+	}
+
+	public boolean checkRevoked(String file, String pass, String id){
+		KeyStoreReader ksr = new KeyStoreReader();
+
+		X509Certificate cert = (X509Certificate) ksr.readCertificate(file, pass, id);
+		Certificate certificate = certificateRepository.findById(Long.parseLong(id)).orElse(null);
+		CertToDtoConverter cdc = new CertToDtoConverter();
+		CertificateDTO dto = cdc.generateDtoFromCert(cert);
+		if(certificate.isRevoked())
+			return false;
+
+		if(dto.getIssuerSerialNumber() != null)
+			checkRevoked(file, pass, dto.getIssuerSerialNumber());
+
+		return true;
 	}
 
 }
