@@ -53,12 +53,9 @@ public class CertificateService {
 			KeyStoreReader ksr = new KeyStoreReader();
 			X509Certificate cert = (X509Certificate) ksr.readCertificate(
 					"keystore.jks", "pass", c.getId().toString());
-			//TODO: check if ca && valid
-			/*
-			isCa = cert.getBasicConstraints() != -1
-			if (isCa && isValid)
-			 */
-			dtos.add(cdc.generateDtoFromCert(cert));
+			if (!c.isRevoked())
+				if (cert.getBasicConstraints() != -1)
+					dtos.add(cdc.generateDtoFromCert(cert));
 		}
 		return dtos;
 	}
@@ -104,6 +101,11 @@ public class CertificateService {
 
 	}
 
+	public boolean isRevoked(Long id) {
+		Certificate c = certificateRepository.findById(id).orElseGet(null);
+		return c.isRevoked();
+	}
+
 	public void createCertificate(CertificateDTO certificateDTO, String uid) {
 		//TODO: do validation && check dates
 		//TODO: set uid to email if not root
@@ -121,12 +123,12 @@ public class CertificateService {
 			if (certificateDTO.isRoot())
 				issuerData = generateIssuerData(certificateDTO, keyPairSubject.getPrivate(), uid);
 			else {
-				String lastCertId = Long.toString(certificate.getId());
+				//String lastCertId = Long.toString(certificate.getId());
 
-				if (!checkDates("keystore.jks", "pass", lastCertId, certificateDTO.getIssuerSerialNumber()) ||
-						!checkIfIssuerCA("keystore.jks", "pass", certificateDTO.getIssuerSerialNumber()) ||
-						!checkRevoked("keystore.jks", "pass", certificateDTO.getIssuerSerialNumber()))
-					return;
+//				if (!checkDates("keystore.jks", "pass", lastCertId, certificateDTO.getIssuerSerialNumber()) ||
+//						!checkIfIssuerCA("keystore.jks", "pass", certificateDTO.getIssuerSerialNumber()) ||
+//						!checkRevoked("keystore.jks", "pass", certificateDTO.getIssuerSerialNumber()))
+//					return;
 
 				KeyStoreReader ksr = new KeyStoreReader();
 				issuerData = ksr.readIssuerFromStore("keystore.jks",
@@ -228,22 +230,6 @@ public class CertificateService {
 		if (cert.getBasicConstraints() != -1)
 			return true;
 		return false;
-	}
-
-	public boolean checkRevoked(String file, String pass, String id) {
-		KeyStoreReader ksr = new KeyStoreReader();
-
-		X509Certificate cert = (X509Certificate) ksr.readCertificate(file, pass, id);
-		Certificate certificate = certificateRepository.findById(Long.parseLong(id)).orElse(null);
-		CertToDtoConverter cdc = new CertToDtoConverter();
-		CertificateDTO dto = cdc.generateDtoFromCert(cert);
-		if (certificate.isRevoked())
-			return false;
-
-		if (dto.getIssuerSerialNumber() != null)
-			checkRevoked(file, pass, dto.getIssuerSerialNumber());
-
-		return true;
 	}
 
 }
