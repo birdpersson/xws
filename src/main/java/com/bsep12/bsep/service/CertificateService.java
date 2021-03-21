@@ -106,73 +106,61 @@ public class CertificateService {
 		return c.isRevoked();
 	}
 
-	public void createCertificate(CertificateDTO certificateDTO, String uid) {
+	public void createCertificate(CertificateDTO certificateDTO) {
 		//TODO: do validation && check dates
 		//TODO: set uid to email if not root
 
-		try {
-			KeyPair keyPairSubject = generateKeyPair();
-			Certificate certificate = new Certificate();
+		KeyPair keyPairSubject = generateKeyPair();
+		Certificate certificate = new Certificate();
 
-			certificateRepository.save(certificate);
-			certificateDTO.setSerialNumber(certificate.getId().toString());
+		certificateRepository.save(certificate);
+		certificateDTO.setSerialNumber(certificate.getId().toString());
 
-			SubjectData subjectData = generateSubjectData(certificateDTO, keyPairSubject, uid);
-			IssuerData issuerData;
+		SubjectData subjectData = generateSubjectData(certificateDTO, keyPairSubject);
+		IssuerData issuerData;
 
-			if (certificateDTO.isRoot())
-				issuerData = generateIssuerData(certificateDTO, keyPairSubject.getPrivate(), uid);
-			else {
-				//String lastCertId = Long.toString(certificate.getId());
+		if (certificateDTO.isRoot())
+			issuerData = generateIssuerData(certificateDTO, keyPairSubject.getPrivate());
+		else {
+			//String lastCertId = Long.toString(certificate.getId());
 
 //				if (!checkDates("keystore.jks", "pass", lastCertId, certificateDTO.getIssuerSerialNumber()) ||
 //						!checkIfIssuerCA("keystore.jks", "pass", certificateDTO.getIssuerSerialNumber()) ||
 //						!checkRevoked("keystore.jks", "pass", certificateDTO.getIssuerSerialNumber()))
 //					return;
 
-				KeyStoreReader ksr = new KeyStoreReader();
-				issuerData = ksr.readIssuerFromStore("keystore.jks",
-						certificateDTO.getIssuerSerialNumber(), "pass".toCharArray(), "pass".toCharArray());
-			}
-
-			CertificateGenerator cg = new CertificateGenerator();
-			X509Certificate cert = cg.generateCertificate(subjectData, issuerData, certificateDTO.isCa());
-
-			cert.verify(keyPairSubject.getPublic());
-
-			KeyStoreWriter ksw = new KeyStoreWriter();
-			ksw.loadKeyStore(null, "pass".toCharArray()); //always gen new keystore (for testing only)
-//		ksw.loadKeyStore("keystore.jks", "pass".toCharArray());
-			ksw.write(cert.getSerialNumber().toString(), keyPairSubject.getPrivate(), "pass".toCharArray(), cert);
-			ksw.saveKeyStore("keystore.jks", "pass".toCharArray());
-
-			System.out.println(cert);
-		} catch (CertificateException e) {
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			e.printStackTrace();
-		} catch (NoSuchProviderException e) {
-			e.printStackTrace();
-		} catch (SignatureException e) {
-			e.printStackTrace();
+			KeyStoreReader ksr = new KeyStoreReader();
+			issuerData = ksr.readIssuerFromStore("keystore.jks",
+					certificateDTO.getIssuerSerialNumber(), "pass".toCharArray(), "pass".toCharArray());
 		}
+
+		CertificateGenerator cg = new CertificateGenerator();
+		X509Certificate cert = cg.generateCertificate(subjectData, issuerData, certificateDTO.isCa());
+
+//		cert.verify(keyPairSubject.getPublic());
+
+		KeyStoreWriter ksw = new KeyStoreWriter();
+//			ksw.loadKeyStore(null, "pass".toCharArray()); //always gen new keystore (for testing only)
+		ksw.loadKeyStore("keystore.jks", "pass".toCharArray());
+		ksw.write(cert.getSerialNumber().toString(), keyPairSubject.getPrivate(), "pass".toCharArray(), cert);
+		ksw.saveKeyStore("keystore.jks", "pass".toCharArray());
+
+		System.out.println(cert);
 	}
 
-	private IssuerData generateIssuerData(CertificateDTO certificate, PrivateKey issuerKey, String uid) {
+	private IssuerData generateIssuerData(CertificateDTO certificate, PrivateKey issuerKey) {
 		X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
 		builder.addRDN(BCStyle.CN, certificate.getCommonName());
 		builder.addRDN(BCStyle.O, certificate.getOrganizationName());
 		builder.addRDN(BCStyle.OU, certificate.getOrganizationalUnitName());
 		builder.addRDN(BCStyle.C, certificate.getCountryName());
 		builder.addRDN(BCStyle.E, certificate.getEmail());
-		builder.addRDN(BCStyle.UID, uid);
+		builder.addRDN(BCStyle.UID, certificate.getEmail());
 
 		return new IssuerData(issuerKey, builder.build());
 	}
 
-	private SubjectData generateSubjectData(CertificateDTO certificate, KeyPair keyPairSubject, String uid) {
+	private SubjectData generateSubjectData(CertificateDTO certificate, KeyPair keyPairSubject) {
 		try {
 			SimpleDateFormat iso8601Formater = new SimpleDateFormat("yyyy-MM-dd");
 			Date startDate = iso8601Formater.parse(certificate.getStartDate());
@@ -185,7 +173,7 @@ public class CertificateService {
 			builder.addRDN(BCStyle.OU, certificate.getOrganizationalUnitName());
 			builder.addRDN(BCStyle.C, certificate.getCountryName());
 			builder.addRDN(BCStyle.E, certificate.getEmail());
-			builder.addRDN(BCStyle.UID, uid);
+			builder.addRDN(BCStyle.UID, certificate.getEmail());
 
 			return new SubjectData(keyPairSubject.getPublic(), builder.build(), sn, startDate, endDate);
 		} catch (ParseException e) {
