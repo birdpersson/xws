@@ -1,9 +1,11 @@
 const Login = { template: "<login></login>" };
 const Create = { template: "<create></create>" };
+const CertificateTable={ template:"<certificate_table></certificate_table> "};
 
 const routes = [
   { path: "/login", component: Login },
   { path: "/create", component: Create },
+  { path: "/all", component: CertificateTable },
 ];
 
 const router = new VueRouter({

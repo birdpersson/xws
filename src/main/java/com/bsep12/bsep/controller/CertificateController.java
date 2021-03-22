@@ -6,14 +6,13 @@ import com.bsep12.bsep.security.TokenUtils;
 import com.bsep12.bsep.service.CertificateService;
 import com.bsep12.bsep.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.cert.X509Certificate;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/cert")
@@ -29,11 +28,44 @@ public class CertificateController {
 	private CertificateService certificateService;
 
 	@PostMapping("/create")
-	public ResponseEntity<X509Certificate> createCertificate(HttpServletRequest request, @RequestBody CertificateDTO certificateDTO) {
-		User u = (User) userService.loadUserByUsername(tokenUtils.getUsernameFromToken(tokenUtils.getToken(request)));
-		X509Certificate certificate = certificateService.createCertificate(certificateDTO, u.getId().toString());
+	public ResponseEntity createCertificate(HttpServletRequest request, @RequestBody CertificateDTO certificateDTO) {
+//		User u = (User) userService.loadUserByUsername(tokenUtils.getUsernameFromToken(tokenUtils.getToken(request)));
+		certificateService.createCertificate(certificateDTO);
 
-		return ResponseEntity.ok(certificate);
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
+	@GetMapping("/")
+	public ResponseEntity getAll() {
+		return ResponseEntity.ok(certificateService.getAll());
+	}
+
+	@GetMapping("/ca")
+	public ResponseEntity getAllCa() {
+		return ResponseEntity.ok(certificateService.getAllCa());
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity getById(@PathVariable String id) {
+		return ResponseEntity.ok(certificateService.getById(id));
+	}
+
+	@GetMapping("/revoke/{id}")
+	public ResponseEntity isRevoked(@PathVariable Long id) {
+		return ResponseEntity.ok(certificateService.isRevoked(id));
+	}
+
+//	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PutMapping("/revoke/{id}")
+	public ResponseEntity revokeCertificate(@PathVariable String id) {
+		certificateService.revokeCertificate(id);
+
+		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+
+	@GetMapping("/all")
+	public  ResponseEntity<List<CertificateDTO>> getAll(HttpServletRequest request){
+		return new ResponseEntity<List<CertificateDTO>>(certificateService.getAll(),HttpStatus.OK);
+	}
+	//TODO: getAll, getAllCa, getBy{id}, @PreAuthorize("hasRole('ROLE_ADMIN')")revoke{id}, getRevoked{id}, getValid{id}
 }

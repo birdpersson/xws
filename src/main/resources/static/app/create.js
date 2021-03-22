@@ -15,6 +15,7 @@ Vue.component("create", {
 
         issuerSerialNumber: null,
       },
+      certificates: [],
       error: false,
     };
   },
@@ -33,43 +34,43 @@ Vue.component("create", {
 
                   <div class="form-label-group">
                     <b>Enter common name</b>
-                    <input v-model="certificate.commonName" class="form-control" required autofocus>
+                    <input v-model="certificate.commonName" class="form-control">
                     <br>
                   </div>
 
                   <div class="form-label-group">
                     <b>Enter organization name</b>
-                    <input v-model="certificate.organizationName" class="form-control" required autofocus>
+                    <input v-model="certificate.organizationName" class="form-control">
                     <br>
                   </div>
 
                   <div class="form-label-group">
                     <b>Enter organizational unit name</b>
-                    <input v-model="certificate.organizationalUnitName" class="form-control" required autofocus>
+                    <input v-model="certificate.organizationalUnitName" class="form-control">
                     <br>
                   </div>
 
                   <div class="form-label-group">
                     <b>Enter country name</b>
-                    <input v-model="certificate.countryName" class="form-control" required autofocus>
+                    <input v-model="certificate.countryName" class="form-control">
                     <br>
                   </div>
 
                   <div class="form-label-group">
                     <b>Enter email address</b>
-                    <input v-model="certificate.email" class="form-control" required autofocus>
+                    <input v-model="certificate.email" class="form-control">
                     <br>
                   </div>
 
                   <div class="form-label-group">
                     <b>Enter start date</b>
-                    <input v-model="certificate.startDate" type="date" class="form-control" required autofocus>
+                    <input v-model="certificate.startDate" type="date" class="form-control">
                     <br>
                   </div>
 
                   <div class="form-label-group">
                     <b>Enter end date</b>
-                    <input v-model="certificate.endDate" type="date" class="form-control" required autofocus>
+                    <input v-model="certificate.endDate" type="date" class="form-control">
                     <br>
                   </div>
 
@@ -81,10 +82,12 @@ Vue.component("create", {
                   <input v-model="certificate.root" type="checkbox">
                   <br>
 
-                  <div class="form-label-group">
+                  <div v-show="!certificate.root" class="form-label-group">
                     <b>Choose issuer</b>
-                    <select>
-
+                    <select v-model="certificate.issuerSerialNumber">
+                      <option v-for="item in certificates" :value="item.serialNumber">
+                        {{item.commonName}}
+                      </option>
                     </select>
                     <br>
                   </div>
@@ -110,5 +113,19 @@ Vue.component("create", {
         .post("cert/create", this.certificate)
         .then(Response => { console.log(Response) });
     },
+
+    arrange() {
+      for (let i = 0; i < this.certificates.length; i++) {
+        this.names.push(this.certificates[i].issuerCommonName);
+      }
+    },
+  },
+  created() {
+    axios
+      .get("cert/ca")
+      .then(Response => {
+        this.certificates = Response.data;
+        console.log(this.certificates);
+      });
   },
 });

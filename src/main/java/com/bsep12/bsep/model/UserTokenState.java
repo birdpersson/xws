@@ -2,32 +2,32 @@ package com.bsep12.bsep.model;
 
 public class UserTokenState {
 
-    private String accessToken;
-    private Long expiresIn;
+	private String accessToken;
+	private Long expiresIn;
 
-    public UserTokenState() {
-        this.accessToken = null;
-        this.expiresIn = null;
-    }
+	public UserTokenState() {
+		this.accessToken = null;
+		this.expiresIn = null;
+	}
 
-    public UserTokenState(String accessToken, long expiresIn) {
-        this.accessToken = accessToken;
-        this.expiresIn = expiresIn;
-    }
+	public UserTokenState(String accessToken, long expiresIn) {
+		this.accessToken = accessToken;
+		this.expiresIn = expiresIn;
+	}
 
-    public String getAccessToken() {
-        return accessToken;
-    }
+	public String getAccessToken() {
+		return accessToken;
+	}
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
 
-    public Long getExpiresIn() {
-        return expiresIn;
-    }
+	public Long getExpiresIn() {
+		return expiresIn;
+	}
 
-    public void setExpiresIn(Long expiresIn) {
-        this.expiresIn = expiresIn;
-    }
+	public void setExpiresIn(Long expiresIn) {
+		this.expiresIn = expiresIn;
+	}
 }

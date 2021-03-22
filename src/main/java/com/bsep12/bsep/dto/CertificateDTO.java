@@ -12,9 +12,11 @@ public class CertificateDTO {
 	private String email;
 	private boolean isCa;
 	private boolean isRoot;
+	private boolean isRevoked;
 
 	private String serialNumber;
 	private String issuerSerialNumber;
+	private String issuerCommonName;
 
 	public CertificateDTO() {
 	}
@@ -91,6 +93,14 @@ public class CertificateDTO {
 		isRoot = root;
 	}
 
+	public boolean isRevoked() {
+		return isRevoked;
+	}
+
+	public void setRevoked(boolean revoked) {
+		isRevoked = revoked;
+	}
+
 	public String getSerialNumber() {
 		return serialNumber;
 	}
@@ -105,6 +115,14 @@ public class CertificateDTO {
 
 	public void setIssuerSerialNumber(String issuerSerialNumber) {
 		this.issuerSerialNumber = issuerSerialNumber;
+	}
+
+	public String getIssuerCommonName() {
+		return issuerCommonName;
+	}
+
+	public void setIssuerCommonName(String issuerCommonName) {
+		this.issuerCommonName = issuerCommonName;
 	}
 
 }
