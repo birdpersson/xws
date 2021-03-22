@@ -1,6 +1,7 @@
 const Login = { template: "<login></login>" };
 const Create = { template: "<create></create>" };
 const CertificateTable={ template:"<certificate_table></certificate_table> "};
+const Navbar = { template: '<navbar></navbar>' }
 
 const routes = [
   { path: "/login", component: Login },

@@ -1,7 +1,6 @@
 package com.bsep12.bsep.controller;
 
 import com.bsep12.bsep.dto.CertificateDTO;
-import com.bsep12.bsep.model.User;
 import com.bsep12.bsep.security.TokenUtils;
 import com.bsep12.bsep.service.CertificateService;
 import com.bsep12.bsep.service.UserService;
@@ -29,7 +28,6 @@ public class CertificateController {
 
 	@PostMapping("/create")
 	public ResponseEntity createCertificate(HttpServletRequest request, @RequestBody CertificateDTO certificateDTO) {
-//		User u = (User) userService.loadUserByUsername(tokenUtils.getUsernameFromToken(tokenUtils.getToken(request)));
 		certificateService.createCertificate(certificateDTO);
 
 		return new ResponseEntity<>(HttpStatus.CREATED);
@@ -55,7 +53,7 @@ public class CertificateController {
 		return ResponseEntity.ok(certificateService.isRevoked(id));
 	}
 
-//	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/revoke/{id}")
 	public ResponseEntity revokeCertificate(@PathVariable String id) {
 		certificateService.revokeCertificate(id);
@@ -63,9 +61,10 @@ public class CertificateController {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/all")
-	public  ResponseEntity<List<CertificateDTO>> getAll(HttpServletRequest request){
-		return new ResponseEntity<List<CertificateDTO>>(certificateService.getAll(),HttpStatus.OK);
+	public ResponseEntity<List<CertificateDTO>> getAll(HttpServletRequest request) {
+		return new ResponseEntity<List<CertificateDTO>>(certificateService.getAll(), HttpStatus.OK);
 	}
-	//TODO: getAll, getAllCa, getBy{id}, @PreAuthorize("hasRole('ROLE_ADMIN')")revoke{id}, getRevoked{id}, getValid{id}
+
 }
