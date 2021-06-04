@@ -1,0 +1,70 @@
+version: "3.8"
+services:
+
+  user-service:
+    build: ./user-service
+    image: auth-service
+    restart: on-failure
+    networks:
+      - services
+    ports:
+      - 9000:8080
+    environment:
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: root
+      DATABASE_DOMAIN: db
+      DATABASE_SCHEMA: postgres
+    depends_on:
+      - db
+
+  post-service:
+    build: ./post-service
+    image: post-service
+    restart: on-failure
+    networks:
+      - services
+    ports:
+      - 9001:8080
+    environment:
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: root
+      DATABASE_DOMAIN: db
+      DATABASE_SCHEMA: postgres
+    depends_on:
+      - db
+
+  media-service:
+    build: ./media-service
+    image: media-service
+    restart: on-failure
+    networks:
+      - services
+    ports:
+      - 9002:8080
+
+  mail-service:
+    build: ./mail-service
+    image: mail-service
+    restart: on-failure
+    networks:
+      - services
+    ports:
+      - 9003:8080
+
+  db:
+    image: postgres
+    restart: always
+    networks:
+      - services
+    environment:
+      POSTGRES_PASSWORD: root
+    volumes:
+      - postgres-data:/var/lib/postgres
+
+volumes:
+  postgres-data:
+
+networks:
+  services:
+    name: services
+    driver: bridge
