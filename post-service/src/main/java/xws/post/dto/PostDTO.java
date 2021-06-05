@@ -3,15 +3,12 @@ package xws.post.dto;
 import java.util.Set;
 
 public class PostDTO {
-
 	private String username;
-	private String created;
-	private Set<String> mediaUrls;
-
-	private String caption;
 	private String location;
-	private Set<String> hashtags;
+	private String caption;
 
+	private Set<String> hashtags;
+	private Set<String> mediaUrls;
 	private Set<String> sharedWith;
 	private boolean isHighlighted;
 
@@ -23,20 +20,12 @@ public class PostDTO {
 		this.username = username;
 	}
 
-	public String getCreated() {
-		return created;
+	public String getLocation() {
+		return location;
 	}
 
-	public void setCreated(String created) {
-		this.created = created;
-	}
-
-	public Set<String> getMediaUrls() {
-		return mediaUrls;
-	}
-
-	public void setMediaUrls(Set<String> mediaUrls) {
-		this.mediaUrls = mediaUrls;
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 	public String getCaption() {
@@ -47,20 +36,20 @@ public class PostDTO {
 		this.caption = caption;
 	}
 
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
 	public Set<String> getHashtags() {
 		return hashtags;
 	}
 
 	public void setHashtags(Set<String> hashtags) {
 		this.hashtags = hashtags;
+	}
+
+	public Set<String> getMediaUrls() {
+		return mediaUrls;
+	}
+
+	public void setMediaUrls(Set<String> mediaUrls) {
+		this.mediaUrls = mediaUrls;
 	}
 
 	public Set<String> getSharedWith() {
@@ -78,5 +67,4 @@ public class PostDTO {
 	public void setHighlighted(boolean highlighted) {
 		isHighlighted = highlighted;
 	}
-
 }
