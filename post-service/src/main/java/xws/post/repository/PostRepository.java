@@ -6,5 +6,5 @@ import xws.post.domain.Post;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-	List<Post> findByUsername(String username);
+	List<Post> findAllByUsername(String username);
 }

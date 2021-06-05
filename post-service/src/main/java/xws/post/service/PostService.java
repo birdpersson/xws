@@ -19,12 +19,12 @@ public class PostService {
 		return postRepository.findById(id).orElseGet(null);
 	}
 
-	public List<Post> findByUsername(String username) {
-		return postRepository.findByUsername(username);
-	}
-
 	public List<Post> findAll() {
 		return postRepository.findAll();
+	}
+
+	public List<Post> findAllByUsername(String username) {
+		return postRepository.findAllByUsername(username);
 	}
 
 	public Post save(PostDTO postDTO) {
