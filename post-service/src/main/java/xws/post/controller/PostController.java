@@ -4,9 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import xws.post.domain.Post;
 import xws.post.dto.PostDTO;
 import xws.post.service.CommentService;
 import xws.post.service.PostService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/post")
@@ -31,6 +34,26 @@ public class PostController {
 	@PostMapping("/")
 	public ResponseEntity createPost(@RequestBody PostDTO postDTO) {
 		return new ResponseEntity(postService.save(postDTO), HttpStatus.CREATED);
+	}
+
+	@GetMapping("/search/hashtags/{query}")
+	public ResponseEntity<List<String>> searchHashtags(@PathVariable String query){
+		return  ResponseEntity.ok(postService.searchHashtags(query));
+	}
+
+	@GetMapping("/search/location/{query}")
+	public ResponseEntity<List<String>> searchLocation(@PathVariable String query){
+		return  ResponseEntity.ok(postService.searchLocation(query));
+	}
+
+	@GetMapping("all/location/{location}")
+	public ResponseEntity findAllByLocation(@PathVariable String location){
+		return ResponseEntity.ok(postService.findAllByLocation(location));
+	}
+
+	@GetMapping("all/hashtags/{hashtag}")
+	public ResponseEntity findAllByHashtah(@PathVariable String hashtag){
+		return ResponseEntity.ok(postService.findAllByHashtag(hashtag));
 	}
 
 	@PostMapping("/{id}/like")
