@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import xws.auth.domain.User;
 import xws.auth.repository.UserRepository;
 
+import java.util.List;
+
 @Service
 public class UserService implements UserDetailsService {
 
@@ -32,6 +34,14 @@ public class UserService implements UserDetailsService {
 
 	public User findByUsername(String username) throws UsernameNotFoundException {
 		return userRepository.findByUsername(username);
+	}
+
+	public User followUser(String issuerId, String subjectId) {
+		User issuer = userRepository.findByUsername(issuerId);
+		List<User> following = issuer.getFollowing();
+		following.add(userRepository.findByUsername(subjectId));
+		issuer.setFollowing(following);
+		return userRepository.save(issuer);
 	}
 
 }
