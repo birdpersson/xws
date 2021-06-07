@@ -1,24 +1,28 @@
 package xws.post.dto;
 
+import java.util.List;
 import java.util.Set;
 
 public class PostDTO {
-	private String username;
+	//private String username;
 	private String location;
 	private String caption;
+	private String postType;
 
-	private Set<String> hashtags;
-	private Set<String> mediaUrls;
-	private Set<String> sharedWith;
-	private boolean isHighlighted;
 
-	public String getUsername() {
-		return username;
-	}
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+	private List<String> hashtags;
+	private List<String> mediaUrls;
+	private List<String> sharedWith;
+	private boolean highlighted;
+
+//	public String getUsername() {
+//		return username;
+//	}
+//
+//	public void setUsername(String username) {
+//		this.username = username;
+//	}
 
 	public String getLocation() {
 		return location;
@@ -36,35 +40,43 @@ public class PostDTO {
 		this.caption = caption;
 	}
 
-	public Set<String> getHashtags() {
+	public List<String> getHashtags() {
 		return hashtags;
 	}
 
-	public void setHashtags(Set<String> hashtags) {
+	public void setHashtags(List<String> hashtags) {
 		this.hashtags = hashtags;
 	}
 
-	public Set<String> getMediaUrls() {
+	public List<String> getMediaUrls() {
 		return mediaUrls;
 	}
 
-	public void setMediaUrls(Set<String> mediaUrls) {
+	public void setMediaUrls(List<String> mediaUrls) {
 		this.mediaUrls = mediaUrls;
 	}
 
-	public Set<String> getSharedWith() {
+	public List<String> getSharedWith() {
 		return sharedWith;
 	}
 
-	public void setSharedWith(Set<String> sharedWith) {
+	public void setSharedWith(List<String> sharedWith) {
 		this.sharedWith = sharedWith;
 	}
 
-	public boolean isHighlighted() {
-		return isHighlighted;
+	public boolean getHighlighted() {
+		return highlighted;
 	}
 
 	public void setHighlighted(boolean highlighted) {
-		isHighlighted = highlighted;
+		this.highlighted = highlighted;
+	}
+
+	public String getPostType() {
+		return postType;
+	}
+
+	public void setPostType(String postType) {
+		this.postType = postType;
 	}
 }

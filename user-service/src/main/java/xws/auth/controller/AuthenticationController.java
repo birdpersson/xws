@@ -17,7 +17,9 @@ import xws.auth.security.TokenUtils;
 import xws.auth.security.auth.JwtAuthenticationRequest;
 import xws.auth.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -50,8 +52,9 @@ public class AuthenticationController {
 	}
 
 	@GetMapping("/userInfo")
-	public ResponseEntity<ChangeInfo> getUserInfo(){
-		User user = userService.findByUsername("user@gmail.com");
+	public ResponseEntity<ChangeInfo> getUserInfo(HttpServletRequest request){
+		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
+		User user = userService.findByUsername(username);
 		ChangeInfo info = ChangeInfoMapper.userToChangeInfo(user);
 		return ResponseEntity.ok(info);
 	}
@@ -61,5 +64,12 @@ public class AuthenticationController {
 		User user = userService.findByUsername("user@gmail.com");
 
 		return new ResponseEntity(userService.updateInfo(dto,user), HttpStatus.CREATED);
+	}
+
+	@GetMapping("/getFriends")
+	public ResponseEntity<List<String>> getFriends(HttpServletRequest request){
+		//String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
+		return ResponseEntity.ok(userService.getFriends("user@gmail.com"));
+
 	}
 }

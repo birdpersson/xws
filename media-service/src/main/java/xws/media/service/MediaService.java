@@ -2,6 +2,7 @@ package xws.media.service;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Service
 public class MediaService {
 
+
 	public List<String> upload(MultipartFile[] multipartFiles, String username) {
 		List<String> paths = new ArrayList<>();
 
@@ -25,9 +27,9 @@ public class MediaService {
 			String fileName = UUID.randomUUID() + "." + ext;
 
 			String home = System.getProperty("user.home");
-			String path = home + File.separator + "clone" + File.separator + "images";
+			String path = home + File.separator + "clone" + File.separator + "images" + File.separator + username;
 			try {
-				Path uploadPath = Paths.get(path + username);
+				Path uploadPath = Paths.get(path);
 
 				if (!Files.exists(uploadPath))
 					Files.createDirectories(uploadPath);
@@ -37,7 +39,7 @@ public class MediaService {
 					Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
 				}
 				//TODO: convert to urls
-				paths.add(path + username + fileName);
+				paths.add(path + File.separator + fileName);
 
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import xws.post.domain.Post;
 import xws.post.dto.PostDTO;
 import xws.post.service.CommentService;
 import xws.post.service.PostService;
@@ -28,8 +29,9 @@ public class PostController {
 		return ResponseEntity.ok(postService.findById(Long.parseLong(id)));
 	}
 
-	@PostMapping("/")
-	public ResponseEntity createPost(@RequestBody PostDTO postDTO) {
+	@CrossOrigin
+	@PostMapping("/createPost")
+	public ResponseEntity<Post> createPost(@RequestBody PostDTO postDTO) {
 		return new ResponseEntity(postService.save(postDTO), HttpStatus.CREATED);
 	}
 

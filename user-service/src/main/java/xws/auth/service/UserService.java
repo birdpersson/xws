@@ -11,6 +11,9 @@ import xws.auth.domain.User;
 import xws.auth.dto.ChangeInfo;
 import xws.auth.repository.UserRepository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class UserService implements UserDetailsService {
 
@@ -46,6 +49,26 @@ public class UserService implements UserDetailsService {
 		user.setPhone(dto.getPhone());
 
 		return userRepository.save(user);
+	}
+	
+	public User followUser(String issuerId, String subjectId) {
+		User issuer = userRepository.findByUsername(issuerId);
+		List<User> following = issuer.getFollowing();
+		following.add(userRepository.findByUsername(subjectId));
+		issuer.setFollowing(following);
+		return userRepository.save(issuer);
+	}
+
+	public List<String> getFriends(String username){
+		User user = userRepository.findByUsername(username);
+		List<User> following = user.getFollowing();
+		List<String> usernames = new ArrayList<String>();
+
+		for(User u : following){
+			usernames.add(u.getUsername());
+		}
+
+		return usernames;
 	}
 
 }
