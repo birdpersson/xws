@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import xws.post.domain.Post;
 import xws.post.dto.PostDTO;
 import xws.post.service.CommentService;
 import xws.post.service.PostService;
+import xws.post.service.UserCollectionService;
 import xws.post.util.TokenUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +25,10 @@ public class PostController {
 
 	@Autowired
 	private CommentService commentService;
+
+	@Autowired
+	private UserCollectionService collectionService;
+
 
 	@GetMapping("/{username}")
 	public ResponseEntity getAll(@PathVariable String username) {
@@ -43,24 +49,24 @@ public class PostController {
 	@PostMapping("/{id}/like")
 	public ResponseEntity likePost(@PathVariable String id, HttpServletRequest request) {
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
-		//TODO: add to user collection
-		//TODO: add username to likes
-		return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
+		Post post = postService.findById(Long.parseLong(id));
+		collectionService.addToLikes(post, username);
+		return new ResponseEntity(postService.like(post, username), HttpStatus.CREATED);
 	}
 
 	@PostMapping("/{id}/dislike")
 	public ResponseEntity dislikePost(@PathVariable String id, HttpServletRequest request) {
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
-		//TODO: add to user collection
-		//TODO: add username to likes
-		return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
+		Post post = postService.findById(Long.parseLong(id));
+		collectionService.addToDislikes(post, username);
+		return new ResponseEntity(postService.dislike(post, username), HttpStatus.CREATED);
 	}
 
 	@PostMapping("/{id}/favorite")
 	public ResponseEntity favorite(@PathVariable String id, HttpServletRequest request) {
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
-		//TODO: add to user collection
-		return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
+		Post post = postService.findById(Long.parseLong(id));
+		return new ResponseEntity(collectionService.addToFavorites(post, username), HttpStatus.CREATED);
 	}
 
 	@PostMapping("/{id}/comment")

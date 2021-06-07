@@ -8,6 +8,7 @@ import xws.post.repository.PostRepository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class PostService {
@@ -40,6 +41,32 @@ public class PostService {
 		p.setCreated(new Date());
 
 		return postRepository.save(p);
+	}
+
+	public Post like(Post post, String username) {
+		Set<String> likes = post.getLikes();
+		Set<String> dislikes = post.getDislikes();
+
+		likes.add(username);
+		dislikes.remove(username);
+
+		post.setLikes(likes);
+		post.setDislikes(dislikes);
+
+		return postRepository.save(post);
+	}
+
+	public Post dislike(Post post, String username) {
+		Set<String> dislikes = post.getDislikes();
+		Set<String> likes = post.getLikes();
+
+		dislikes.add(username);
+		likes.remove(username);
+
+		post.setDislikes(dislikes);
+		post.setLikes(likes);
+
+		return postRepository.save(post);
 	}
 
 }
