@@ -36,9 +36,41 @@ public class UserService implements UserDetailsService {
 		return userRepository.findByUsername(username);
 	}
 
-	public List<User> search(String query){
-		return userRepository.search(query);
+	public User followUser(String issuerId, String subjectId) {
+		User issuer = userRepository.findByUsername(issuerId);
+		User subject = userRepository.findByUsername(subjectId);
+		if (subject.isPrivate()) {
+			List<User> followers = subject.getFollowers();
+			followers.add(issuer);
+			subject.setFollowers(followers);
+			return userRepository.save(subject);
+		} else {
+			List<User> following = issuer.getFollowing();
+			following.add(subject);
+			issuer.setFollowing(following);
+			return userRepository.save(issuer);
+		}
 	}
 
+	public User acceptFollower(String issuerId, String subjectId) {
+		User subject = userRepository.findByUsername(subjectId);
+		User issuer = userRepository.findByUsername(issuerId);
+
+		List<User> followers = subject.getFollowers();
+		List<User> following = issuer.getFollowing();
+
+		followers.remove(issuer);
+		following.add(subject);
+
+		issuer.setFollowing(following);
+		subject.setFollowers(followers);
+
+		userRepository.save(subject);
+		return userRepository.save(issuer);
+	}
+
+  public List<User> search(String query){
+		return userRepository.search(query);
+	}
 
 }
