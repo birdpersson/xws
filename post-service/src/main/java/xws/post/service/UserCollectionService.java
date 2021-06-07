@@ -2,6 +2,7 @@ package xws.post.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import xws.post.domain.CustomCollection;
 import xws.post.domain.Post;
 import xws.post.domain.UserCollection;
 import xws.post.repository.UserCollectionRepository;
@@ -50,6 +51,14 @@ public class UserCollectionService {
 		c.setDislikes(dislikes);
 		return userCollectionRepository.save(c);
 
+	}
+
+	public UserCollection addToCollections(CustomCollection collection, String username) {
+		UserCollection c = findByUsername(username);
+		Set<CustomCollection> collections = c.getCollections();
+		collections.add(collection);
+		c.setCollections(collections);
+		return userCollectionRepository.save(c);
 	}
 
 }
