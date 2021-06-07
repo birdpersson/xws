@@ -18,7 +18,7 @@ public class MediaController {
 	@Autowired
 	private MediaService mediaService;
 
-	@PostMapping("/")
+	@PostMapping("/upload")
 	public ResponseEntity uploadFiles(@RequestParam("media") MultipartFile[] multipartFiles) {
 		//TODO: get username from token
 		String username = "temp";

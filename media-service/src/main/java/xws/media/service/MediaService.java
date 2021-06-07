@@ -1,6 +1,7 @@
 package xws.media.service;
 
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Service
 public class MediaService {
 
 	public List<String> upload(MultipartFile[] multipartFiles, String username) {
