@@ -26,7 +26,6 @@ public class MediaController {
 	@PostMapping("/upload")
 	public ResponseEntity uploadFiles(@RequestParam("media") MultipartFile[] multipartFiles, HttpServletRequest request) {
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
-		System.out.println(username);
 		return new ResponseEntity(mediaService.upload(multipartFiles, username), HttpStatus.CREATED);
 	}
 

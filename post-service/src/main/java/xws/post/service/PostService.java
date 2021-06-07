@@ -27,10 +27,9 @@ public class PostService {
 		return postRepository.findAllByUsername(username);
 	}
 
-	public Post save(PostDTO postDTO) {
+	public Post save(PostDTO postDTO, String username) {
 		Post p = new Post();
-		//TODO: get username from token
-		p.setUsername(postDTO.getUsername());
+		p.setUsername(username);
 		p.setLocation(postDTO.getLocation());
 		p.setHashtags(postDTO.getHashtags());
 		p.setCaption(postDTO.getCaption());

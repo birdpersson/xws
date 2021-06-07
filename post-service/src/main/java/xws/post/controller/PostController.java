@@ -7,10 +7,16 @@ import org.springframework.web.bind.annotation.*;
 import xws.post.dto.PostDTO;
 import xws.post.service.CommentService;
 import xws.post.service.PostService;
+import xws.post.util.TokenUtils;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping(value = "/post")
 public class PostController {
+
+	@Autowired
+	private TokenUtils tokenUtils;
 
 	@Autowired
 	private PostService postService;
@@ -29,39 +35,39 @@ public class PostController {
 	}
 
 	@PostMapping("/")
-	public ResponseEntity createPost(@RequestBody PostDTO postDTO) {
-		return new ResponseEntity(postService.save(postDTO), HttpStatus.CREATED);
+	public ResponseEntity createPost(@RequestBody PostDTO postDTO, HttpServletRequest request) {
+		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
+		return new ResponseEntity(postService.save(postDTO, username), HttpStatus.CREATED);
 	}
 
 	@PostMapping("/{id}/like")
-	public ResponseEntity likePost(@PathVariable String id) {
-		//TODO: get username form token
+	public ResponseEntity likePost(@PathVariable String id, HttpServletRequest request) {
+		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
 		//TODO: add to user collection
 		//TODO: add username to likes
 		return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	@PostMapping("/{id}/dislike")
-	public ResponseEntity dislikePost(@PathVariable String id) {
-		//TODO: get username from token
+	public ResponseEntity dislikePost(@PathVariable String id, HttpServletRequest request) {
+		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
 		//TODO: add to user collection
 		//TODO: add username to likes
 		return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	@PostMapping("/{id}/favorite")
-	public ResponseEntity favorite(@PathVariable String id) {
-		//TODO: get username from token
+	public ResponseEntity favorite(@PathVariable String id, HttpServletRequest request) {
+		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
 		//TODO: add to user collection
 		return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	@PostMapping("/{id}/comment")
-	public ResponseEntity comment(@PathVariable String id, @RequestBody String text) {
-		//TODO: get username from token
-		String username = "temp";
+	public ResponseEntity comment(@PathVariable String id, @RequestBody String text, HttpServletRequest request) {
+		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
 		return new ResponseEntity(commentService.save(username,
-				postService.findById(Long.parseLong(id)), text), HttpStatus.NOT_IMPLEMENTED);
+				postService.findById(Long.parseLong(id)), text), HttpStatus.CREATED);
 	}
 
 }
