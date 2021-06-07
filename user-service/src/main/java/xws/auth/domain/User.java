@@ -51,6 +51,9 @@ public class User implements UserDetails {
 	@Column
 	private String role;
 
+	@OneToMany
+	private List<User> following;
+
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_authority",
 			joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -154,6 +157,14 @@ public class User implements UserDetails {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public List<User> getFollowing() {
+		return following;
+	}
+
+	public void setFollowing(List<User> following) {
+		this.following = following;
 	}
 
 	@Override

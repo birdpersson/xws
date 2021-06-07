@@ -1,9 +1,7 @@
 package xws.post.domain;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Post {
@@ -19,7 +17,7 @@ public class Post {
 	private Date created;
 
 	@ElementCollection
-	private Set<String> mediaUrls = new HashSet<>();
+	private List<String> mediaUrls = new ArrayList<>();
 
 	@Column
 	private String caption;
@@ -28,7 +26,7 @@ public class Post {
 	private String location;
 
 	@ElementCollection
-	private Set<String> hashtags = new HashSet<>();
+	private List<String> hashtags = new ArrayList<>();
 
 	@ElementCollection
 	private Set<String> likes = new HashSet<>();
@@ -40,10 +38,20 @@ public class Post {
 	private Set<Comment> comments = new HashSet<>();
 
 	@ElementCollection
-	private Set<String> sharedWith = new HashSet<>();
+	private List<String> sharedWith = new ArrayList<>();
 
 	@Column
-	private boolean isHighlighted;
+	private boolean highlighted;
+
+	private String postType;
+
+	public String getPostType() {
+		return postType;
+	}
+
+	public void setPostType(String postType) {
+		this.postType = postType;
+	}
 
 	public Long getId() {
 		return id;
@@ -69,11 +77,11 @@ public class Post {
 		this.created = created;
 	}
 
-	public Set<String> getMediaUrls() {
+	public List<String> getMediaUrls() {
 		return mediaUrls;
 	}
 
-	public void setMediaUrls(Set<String> mediaUrls) {
+	public void setMediaUrls(List<String> mediaUrls) {
 		this.mediaUrls = mediaUrls;
 	}
 
@@ -93,11 +101,11 @@ public class Post {
 		this.location = location;
 	}
 
-	public Set<String> getHashtags() {
+	public List<String> getHashtags() {
 		return hashtags;
 	}
 
-	public void setHashtags(Set<String> hashtags) {
+	public void setHashtags(List<String> hashtags) {
 		this.hashtags = hashtags;
 	}
 
@@ -125,20 +133,19 @@ public class Post {
 		this.comments = comments;
 	}
 
-	public Set<String> getSharedWith() {
+	public List<String> getSharedWith() {
 		return sharedWith;
 	}
 
-	public void setSharedWith(Set<String> sharedWith) {
+	public void setSharedWith(List<String> sharedWith) {
 		this.sharedWith = sharedWith;
 	}
 
-	public boolean isHighlighted() {
-		return isHighlighted;
+	public boolean getHighlighted() {
+		return highlighted;
 	}
 
 	public void setHighlighted(boolean highlighted) {
-		isHighlighted = highlighted;
+		this.highlighted = highlighted;
 	}
-
 }

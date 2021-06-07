@@ -31,8 +31,9 @@ public class PostController {
 		return ResponseEntity.ok(postService.findById(Long.parseLong(id)));
 	}
 
-	@PostMapping("/")
-	public ResponseEntity createPost(@RequestBody PostDTO postDTO) {
+	@CrossOrigin
+	@PostMapping("/createPost")
+	public ResponseEntity<Post> createPost(@RequestBody PostDTO postDTO) {
 		return new ResponseEntity(postService.save(postDTO), HttpStatus.CREATED);
 	}
 

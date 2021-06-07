@@ -39,15 +39,19 @@ public class PostService {
 
 	public Post save(PostDTO postDTO) {
 		Post p = new Post();
+
+
 		//TODO: get username from token
-		p.setUsername(postDTO.getUsername());
+		//String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
+		p.setUsername("user@gmail.com");
 		p.setLocation(postDTO.getLocation());
 		p.setHashtags(postDTO.getHashtags());
 		p.setCaption(postDTO.getCaption());
+		p.setPostType(postDTO.getPostType());
 
 		p.setMediaUrls(postDTO.getMediaUrls());
 		p.setSharedWith(postDTO.getSharedWith());
-		p.setHighlighted(postDTO.isHighlighted());
+		p.setHighlighted(postDTO.getHighlighted());
 		p.setCreated(new Date());
 
 		return postRepository.save(p);
