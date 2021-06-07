@@ -16,6 +16,8 @@ import xws.post.util.TokenUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/post")
 public class PostController {
@@ -46,6 +48,26 @@ public class PostController {
 	public ResponseEntity<Post> createPost(@RequestBody PostDTO postDTO, HttpServletRequest request) {
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
 		return new ResponseEntity<>(postService.save(postDTO, username), HttpStatus.CREATED);
+	}
+
+	@GetMapping("/search/hashtags/{query}")
+	public ResponseEntity<List<String>> searchHashtags(@PathVariable String query){
+		return  ResponseEntity.ok(postService.searchHashtags(query));
+	}
+
+	@GetMapping("/search/location/{query}")
+	public ResponseEntity<List<String>> searchLocation(@PathVariable String query){
+		return  ResponseEntity.ok(postService.searchLocation(query));
+	}
+
+	@GetMapping("all/location/{location}")
+	public ResponseEntity findAllByLocation(@PathVariable String location){
+		return ResponseEntity.ok(postService.findAllByLocation(location));
+	}
+
+	@GetMapping("all/hashtags/{hashtag}")
+	public ResponseEntity findAllByHashtah(@PathVariable String hashtag){
+		return ResponseEntity.ok(postService.findAllByHashtag(hashtag));
 	}
 
 	@PostMapping("/{id}/like")

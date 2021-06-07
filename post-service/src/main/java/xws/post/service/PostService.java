@@ -28,6 +28,16 @@ public class PostService {
 		return postRepository.findAllByUsername(username);
 	}
 
+	public List<String> searchHashtags(String query){ return postRepository.searchHashtag(query);}
+
+	public List<String> searchLocation(String query){ return postRepository.searchLocation(query);}
+
+	public List<Post> findAllByLocation(String location) {
+		return postRepository.findAllByLocation(location);
+	}
+
+	public  List<Post> findAllByHashtag(String hashtag){ return  postRepository.findAllByHashtag(hashtag);}
+
 	public Post save(PostDTO postDTO, String username) {
 		Post p = new Post();
 		p.setUsername(username);

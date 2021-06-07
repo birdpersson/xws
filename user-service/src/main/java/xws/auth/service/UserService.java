@@ -69,4 +69,8 @@ public class UserService implements UserDetailsService {
 		return userRepository.save(issuer);
 	}
 
+  public List<User> search(String query){
+		return userRepository.search(query);
+	}
+
 }
