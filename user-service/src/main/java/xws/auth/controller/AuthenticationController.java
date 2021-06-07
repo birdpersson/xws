@@ -1,18 +1,18 @@
 package xws.auth.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import xws.auth.domain.User;
 import xws.auth.domain.UserTokenState;
+import xws.auth.dto.ChangeInfo;
+import xws.auth.mapper.ChangeInfoMapper;
 import xws.auth.security.TokenUtils;
 import xws.auth.security.auth.JwtAuthenticationRequest;
 import xws.auth.service.UserService;
@@ -49,4 +49,17 @@ public class AuthenticationController {
 		return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
 	}
 
+	@GetMapping("/userInfo")
+	public ResponseEntity<ChangeInfo> getUserInfo(){
+		User user = userService.findByUsername("user@gmail.com");
+		ChangeInfo info = ChangeInfoMapper.userToChangeInfo(user);
+		return ResponseEntity.ok(info);
+	}
+
+	@PostMapping("/changeInfo")
+	public ResponseEntity changeInfo(@RequestBody ChangeInfo dto){
+		User user = userService.findByUsername("user@gmail.com");
+
+		return new ResponseEntity(userService.updateInfo(dto,user), HttpStatus.CREATED);
+	}
 }
