@@ -1,5 +1,5 @@
-INSERT INTO USERS (username, password, name, email, enabled, role) VALUES ('user', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'User', 'isa59202021@gmail.com', true, 'USER');
-INSERT INTO USERS (username, password, name, email, enabled, role) VALUES ('admin', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'Admin', 'isa59202021@gmail.com', true, 'ADMIN');
+INSERT INTO USERS (username, password, name, email, enabled, privacy, role) VALUES ('user', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'User', 'isa59202021@gmail.com', true, false, 'USER');
+INSERT INTO USERS (username, password, name, email, enabled, privacy, role) VALUES ('admin', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'Admin', 'isa59202021@gmail.com', true, true, 'ADMIN');
 
 INSERT INTO AUTHORITY (name) VALUES ('ROLE_USER');
 INSERT INTO AUTHORITY (name) VALUES ('ROLE_ADMIN');
