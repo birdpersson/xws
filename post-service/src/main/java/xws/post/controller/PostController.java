@@ -21,15 +21,16 @@ public class PostController {
 	@Autowired
 	private CommentService commentService;
 
+	@CrossOrigin
 	@GetMapping("/{username}")
 	public ResponseEntity getAll(@PathVariable String username) {
 		return ResponseEntity.ok(postService.findAllByUsername(username));
 	}
-
+/*
 	@GetMapping("/{id}")
 	public ResponseEntity getPost(@PathVariable String id) {
 		return ResponseEntity.ok(postService.findById(Long.parseLong(id)));
-	}
+	}*/
 
 	@CrossOrigin
 	@PostMapping("/createPost")

@@ -23,4 +23,9 @@ public class UserController {
     public ResponseEntity search(@PathVariable String query) {
         return ResponseEntity.ok(userService.search(query));
     }
+
+    @GetMapping(value = "/profile-view/{username}")
+    public ResponseEntity getProfileInfo(@PathVariable String username) {
+        return ResponseEntity.ok(userService.findByUsername(username));
+    }
 }
