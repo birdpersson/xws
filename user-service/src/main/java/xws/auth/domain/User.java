@@ -49,7 +49,16 @@ public class User implements UserDetails {
 	private boolean enabled;
 
 	@Column
+	private boolean privacy;
+
+	@Column
 	private String role;
+
+	@OneToMany
+	private List<User> following;
+
+	@OneToMany
+	private List<User> followers;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_authority",
@@ -148,12 +157,36 @@ public class User implements UserDetails {
 		this.enabled = enabled;
 	}
 
+	public boolean isPrivate() {
+		return privacy;
+	}
+
+	public void setPrivacy(boolean privacy) {
+		this.privacy = privacy;
+	}
+
 	public String getRole() {
 		return role;
 	}
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public List<User> getFollowing() {
+		return following;
+	}
+
+	public void setFollowing(List<User> following) {
+		this.following = following;
+	}
+
+	public List<User> getFollowers() {
+		return followers;
+	}
+
+	public void setFollowers(List<User> followers) {
+		this.followers = followers;
 	}
 
 	@Override
