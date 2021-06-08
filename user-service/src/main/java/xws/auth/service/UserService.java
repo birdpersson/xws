@@ -7,7 +7,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import xws.auth.domain.Authority;
 import xws.auth.domain.User;
+import xws.auth.dto.UserRegistrationDTO;
+import xws.auth.exception.UsernameNotUniqueException;
 import xws.auth.repository.UserRepository;
 
 import java.util.List;
@@ -36,6 +39,33 @@ public class UserService implements UserDetailsService {
 		return userRepository.findByUsername(username);
 	}
 
+	public User register(UserRegistrationDTO userDTO) throws UsernameNotUniqueException {
+		if(userRepository.findByUsername(userDTO.getUsername())!=null)
+			throw new UsernameNotUniqueException("Username " + userDTO.getUsername() + " is already registered.");
+		User u = new User();
+		u.setUsername(userDTO.getUsername());
+		u.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+		u.setEnabled(true);
+		u.setName(userDTO.getName());
+		u.setBio(userDTO.getBio());
+		u.setBirthday(userDTO.getBirthday());
+		u.setGender(userDTO.getGender());
+		u.setEmail(userDTO.getEmail());
+		u.setWebsite(userDTO.getWebsite());
+		u.setPhone(userDTO.getPhone());
+
+		/*u.setToken(UUID.randomUUID().toString());
+		u.setExpiry(new Date((new Date().getTime() + 300000)));*/
+		u.setRole("USER");
+
+		List<Authority> auth = authService.findByName("ROLE_USER");
+		u.setAuthorities(auth);
+
+		u = userRepository.save(u);
+		return u;
+	}
+
+	
 	public User followUser(String issuerId, String subjectId) {
 		User issuer = userRepository.findByUsername(issuerId);
 		User subject = userRepository.findByUsername(subjectId);
