@@ -46,6 +46,7 @@ public class UserService implements UserDetailsService {
 		u.setUsername(userDTO.getUsername());
 		u.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 		u.setEnabled(true);
+		u.setPrivacy(true);
 		u.setName(userDTO.getName());
 		u.setBio(userDTO.getBio());
 		u.setBirthday(userDTO.getBirthday());
