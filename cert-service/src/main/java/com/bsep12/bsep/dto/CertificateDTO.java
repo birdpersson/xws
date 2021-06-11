@@ -10,6 +10,7 @@ public class CertificateDTO {
 	private String organizationalUnitName;
 	private String countryName;
 	private String email;
+	private String usage;
 	private boolean isCa;
 	private boolean isRoot;
 	private boolean isRevoked;
@@ -75,6 +76,14 @@ public class CertificateDTO {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getUsage() {
+		return usage;
+	}
+
+	public void setUsage(String usage) {
+		this.usage = usage;
 	}
 
 	public boolean isCa() {

@@ -8,6 +8,7 @@ import org.bouncycastle.asn1.x500.style.IETFUtils;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 
 public class CertToDtoConverter {
@@ -33,16 +34,17 @@ public class CertToDtoConverter {
 			String startDate = cert.getNotBefore().toString();
 			String endDate = cert.getNotAfter().toString();
 
+			String usage = cert.getExtendedKeyUsage().get(0); // only added 1 use
 			boolean ca = cert.getBasicConstraints() != -1;
 			String serialNumber = cert.getSerialNumber().toString();
 
 			X500Name issuerName = new JcaX509CertificateHolder(cert).getIssuer();
-			boolean root=false;
-			if(issuerName.equals(subjectName))
-				root=true;
+			boolean root = false;
+			if (issuerName.equals(subjectName))
+				root = true;
 
-			RDN icn=issuerName.getRDNs(BCStyle.CN)[0];
-			String issuerCommonName=IETFUtils.valueToString(icn.getFirst().getValue());
+			RDN icn = issuerName.getRDNs(BCStyle.CN)[0];
+			String issuerCommonName = IETFUtils.valueToString(icn.getFirst().getValue());
 
 			CertificateDTO dto = new CertificateDTO();
 
@@ -54,6 +56,7 @@ public class CertToDtoConverter {
 			dto.setOrganizationalUnitName(organizationalUnitName);
 			dto.setCountryName(countryName);
 			dto.setEmail(email);
+			dto.setUsage(usage);
 			dto.setCa(ca);
 			dto.setRoot(root);
 			dto.setIssuerCommonName(issuerCommonName);
@@ -61,7 +64,7 @@ public class CertToDtoConverter {
 			dto.setSerialNumber(serialNumber);
 
 			return dto;
-		} catch (CertificateEncodingException e) {
+		} catch (CertificateEncodingException | CertificateParsingException e) {
 			e.printStackTrace();
 			return null;
 		}

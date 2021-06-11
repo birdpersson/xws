@@ -105,34 +105,34 @@ public class CertificateService {
 		return c.isRevoked();
 	}
 
-	public void createCertificate(CertificateDTO certificateDTO) {
+	public void createCertificate(CertificateDTO dto) {
 
 		KeyPair keyPairSubject = generateKeyPair();
 		Certificate certificate = new Certificate();
 
 		certificateRepository.save(certificate);
-		certificateDTO.setSerialNumber(certificate.getId().toString());
+		dto.setSerialNumber(certificate.getId().toString());
 
-		SubjectData subjectData = generateSubjectData(certificateDTO, keyPairSubject);
+		SubjectData subjectData = generateSubjectData(dto, keyPairSubject);
 		IssuerData issuerData;
 
-		if (certificateDTO.isRoot())
-			issuerData = generateIssuerData(certificateDTO, keyPairSubject.getPrivate());
+		if (dto.isRoot())
+			issuerData = generateIssuerData(dto, keyPairSubject.getPrivate());
 		else {
 			//String lastCertId = Long.toString(certificate.getId());
 
-//				if (!checkDates("keystore.jks", "pass", lastCertId, certificateDTO.getIssuerSerialNumber()) ||
-//						!checkIfIssuerCA("keystore.jks", "pass", certificateDTO.getIssuerSerialNumber()) ||
-//						!checkRevoked("keystore.jks", "pass", certificateDTO.getIssuerSerialNumber()))
+//				if (!checkDates("keystore.jks", "pass", lastCertId, dto.getIssuerSerialNumber()) ||
+//						!checkIfIssuerCA("keystore.jks", "pass", dto.getIssuerSerialNumber()) ||
+//						!checkRevoked("keystore.jks", "pass", dto.getIssuerSerialNumber()))
 //					return;
 
 			KeyStoreReader ksr = new KeyStoreReader();
 			issuerData = ksr.readIssuerFromStore("keystore.jks",
-					certificateDTO.getIssuerSerialNumber(), "pass".toCharArray(), "pass".toCharArray());
+					dto.getIssuerSerialNumber(), "pass".toCharArray(), "pass".toCharArray());
 		}
 
 		CertificateGenerator cg = new CertificateGenerator();
-		X509Certificate cert = cg.generateCertificate(subjectData, issuerData, certificateDTO.isCa());
+		X509Certificate cert = cg.generateCertificate(subjectData, issuerData, dto.isCa(), dto.getUsage());
 
 		KeyStoreWriter ksw = new KeyStoreWriter();
 //		ksw.loadKeyStore(null, "pass".toCharArray()); //always gen new keystore (for testing only)
