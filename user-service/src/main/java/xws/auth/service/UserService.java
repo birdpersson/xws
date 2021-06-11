@@ -2,6 +2,8 @@ package xws.auth.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,6 +13,8 @@ import xws.auth.domain.User;
 import xws.auth.dto.ChangeInfo;
 import xws.auth.repository.UserRepository;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +43,11 @@ public class UserService implements UserDetailsService {
 	}
 
 	public User updateInfo(ChangeInfo dto, User user){
+
+
 		user.setBio(dto.getBio());
 		user.setEmail(dto.getEmail());
+		user.setUsername(dto.getUsername());
 		user.setGender(dto.getGender());
 		user.setUsername(dto.getUsername());
 		user.setName(dto.getName());
@@ -53,9 +60,34 @@ public class UserService implements UserDetailsService {
 	
 	public User followUser(String issuerId, String subjectId) {
 		User issuer = userRepository.findByUsername(issuerId);
+		User subject = userRepository.findByUsername(subjectId);
+		if (subject.isPrivate()) {
+			List<User> followers = subject.getFollowers();
+			followers.add(issuer);
+			subject.setFollowers(followers);
+			return userRepository.save(subject);
+		} else {
+			List<User> following = issuer.getFollowing();
+			following.add(subject);
+			issuer.setFollowing(following);
+			return userRepository.save(issuer);
+		}
+	}
+
+	public User acceptFollower(String issuerId, String subjectId) {
+		User subject = userRepository.findByUsername(subjectId);
+		User issuer = userRepository.findByUsername(issuerId);
+
+		List<User> followers = subject.getFollowers();
 		List<User> following = issuer.getFollowing();
-		following.add(userRepository.findByUsername(subjectId));
+
+		followers.remove(issuer);
+		following.add(subject);
+
 		issuer.setFollowing(following);
+		subject.setFollowers(followers);
+
+		userRepository.save(subject);
 		return userRepository.save(issuer);
 	}
 
@@ -69,6 +101,15 @@ public class UserService implements UserDetailsService {
 		}
 
 		return usernames;
+
+	}
+
+  	public List<User> search(String query){
+		return userRepository.search(query);
+	}
+
+	public List<User> findAll(){
+		return userRepository.findAll();
 	}
 
 }

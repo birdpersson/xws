@@ -19,6 +19,7 @@ import xws.auth.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -54,14 +55,24 @@ public class AuthenticationController {
 	@GetMapping("/userInfo")
 	public ResponseEntity<ChangeInfo> getUserInfo(HttpServletRequest request){
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
+
 		User user = userService.findByUsername(username);
 		ChangeInfo info = ChangeInfoMapper.userToChangeInfo(user);
 		return ResponseEntity.ok(info);
 	}
 
 	@PostMapping("/changeInfo")
-	public ResponseEntity changeInfo(@RequestBody ChangeInfo dto){
-		User user = userService.findByUsername("user@gmail.com");
+	public ResponseEntity changeInfo(@RequestBody ChangeInfo dto, HttpServletRequest request){
+		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
+		User user = userService.findByUsername(username);
+		List<User> users = userService.findAll();
+		List<String> usernames = new ArrayList<>();
+		for(User u : users){
+			usernames.add(u.getUsername());
+		}
+		if(usernames.contains(dto.getUsername())){
+			return new ResponseEntity("Username already exists",HttpStatus.BAD_REQUEST);
+		}
 
 		return new ResponseEntity(userService.updateInfo(dto,user), HttpStatus.CREATED);
 	}

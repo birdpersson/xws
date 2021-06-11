@@ -1,12 +1,15 @@
 package xws.media.service;
 
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,6 +20,9 @@ import java.util.UUID;
 
 @Service
 public class MediaService {
+
+	@Autowired
+	private Environment env;
 
 
 	public List<String> upload(MultipartFile[] multipartFiles, String username) {
@@ -39,8 +45,11 @@ public class MediaService {
 					Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
 				}
 				//TODO: convert to urls
-				paths.add(path + File.separator + fileName);
+				String hostName = InetAddress.getLocalHost().getHostName();
+				String port = env.getProperty("local.server.port");
+				String fileUrl = String.format("http://%s:%s%s/%s", hostName, port, path, fileName);
 
+				paths.add(fileUrl);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
