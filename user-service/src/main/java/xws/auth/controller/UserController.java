@@ -5,11 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import xws.auth.domain.User;
-import xws.auth.dto.UserRegistrationDTO;
+import xws.auth.dto.UserDTO;
 import xws.auth.exception.UsernameNotUniqueException;
 import xws.auth.service.UserService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/user")
@@ -24,7 +22,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> addUser(@RequestBody UserRegistrationDTO userDTO) throws UsernameNotUniqueException {
-        return new ResponseEntity(userService.register(userDTO), HttpStatus.CREATED);
+    public ResponseEntity<User> addUser(@RequestBody UserDTO userDTO) throws UsernameNotUniqueException {
+        return new ResponseEntity(userService.create(userDTO), HttpStatus.CREATED);
     }
 }

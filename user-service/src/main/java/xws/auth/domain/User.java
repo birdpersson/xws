@@ -25,6 +25,24 @@ public class User implements UserDetails {
 	private String password;
 
 	@Column
+	private String salt;
+
+	@Column
+	private String token;
+
+	@Column
+	private Date expiry;
+
+	@Column
+	private String role;
+
+	@Column(nullable = false)
+	private boolean enabled;
+
+	@Column
+	private boolean privacy;
+
+	@Column
 	private String name;
 
 	@Column
@@ -44,15 +62,6 @@ public class User implements UserDetails {
 
 	@Column
 	private String bio;
-
-	@Column(nullable = false)
-	private boolean enabled;
-
-	@Column
-	private boolean privacy;
-
-	@Column
-	private String role;
 
 	@OneToMany
 	private List<User> following;
@@ -90,6 +99,55 @@ public class User implements UserDetails {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public Date getExpiry() {
+		return expiry;
+	}
+
+	public void setExpiry(Date expiry) {
+		this.expiry = expiry;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public boolean isPrivate() {
+		return privacy;
+	}
+
+	public void setPrivacy(boolean privacy) {
+		this.privacy = privacy;
 	}
 
 	public String getName() {
@@ -146,31 +204,6 @@ public class User implements UserDetails {
 
 	public void setBio(String bio) {
 		this.bio = bio;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	public boolean isPrivate() {
-		return privacy;
-	}
-
-	public void setPrivacy(boolean privacy) {
-		this.privacy = privacy;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
 	}
 
 	public List<User> getFollowing() {

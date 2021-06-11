@@ -9,6 +9,8 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
 	User findByUsername(String username);
 
+	User findByToken(String token);
+
 	@Query("SELECT u FROM User u WHERE LOWER(u.username) LIKE LOWER(concat('%', ?1,'%')) ")
 	List<User> search(String query);
 }
