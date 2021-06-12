@@ -21,7 +21,7 @@ public class EmailService {
 	@Async
 	public void sendMail(User user) throws MailException {
 		SimpleMailMessage mail = new SimpleMailMessage();
-		mail.setTo(user.getUsername());
+		mail.setTo(user.getEmail());
 		mail.setFrom(env.getProperty("spring.mail.username"));
 		mail.setSubject("Confirm registration to BSEP12");
 		mail.setText("http://localhost:8080/auth/verify?token=" + user.getToken());
@@ -31,7 +31,7 @@ public class EmailService {
 	@Async
 	public void sendMail2(User user) throws MailException {
 		SimpleMailMessage mail = new SimpleMailMessage();
-		mail.setTo(user.getUsername());
+		mail.setTo(user.getEmail());
 		mail.setFrom(env.getProperty("spring.mail.username"));
 		mail.setSubject("Reset password BSEP12");
 		mail.setText("http://localhost:4200/reset-password?token=" + user.getToken());

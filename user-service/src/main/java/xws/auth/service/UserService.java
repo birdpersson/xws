@@ -41,6 +41,10 @@ public class UserService implements UserDetailsService {
 		return userRepository.findByUsername(username);
 	}
 
+	public User findByEmail(String email) throws UsernameNotFoundException {
+		return userRepository.findByEmail(email);
+	}
+
 	public User findByToken(String token) throws UsernameNotFoundException {
 		return userRepository.findByToken(token);
 	}

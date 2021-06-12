@@ -14,7 +14,8 @@
 	<name>bsep</name>
 	<description>BSEP project for 2020/2021</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>1.8</java.version>
+		<appName>cert_service</appName>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -80,6 +81,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>${appName}</finalName>
 	</build>
 
 </project>

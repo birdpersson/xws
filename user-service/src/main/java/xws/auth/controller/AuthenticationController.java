@@ -91,8 +91,8 @@ public class AuthenticationController {
 	}
 
 	@PostMapping("/forgot-password")
-	public ResponseEntity forgotPassword(@RequestBody String username) {
-		User existUser = userService.findByUsername(username);
+	public ResponseEntity forgotPassword(@RequestBody String email) {
+		User existUser = userService.findByEmail(email);
 		if (existUser == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
