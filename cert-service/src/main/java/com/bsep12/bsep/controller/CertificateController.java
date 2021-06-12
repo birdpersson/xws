@@ -1,13 +1,10 @@
 package com.bsep12.bsep.controller;
 
 import com.bsep12.bsep.dto.CertificateDTO;
-import com.bsep12.bsep.security.TokenUtils;
 import com.bsep12.bsep.service.CertificateService;
-import com.bsep12.bsep.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,12 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/cert")
 public class CertificateController {
-
-	@Autowired
-	private TokenUtils tokenUtils;
-
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	private CertificateService certificateService;
@@ -53,7 +44,7 @@ public class CertificateController {
 		return ResponseEntity.ok(certificateService.isRevoked(id));
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	//	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/revoke/{id}")
 	public ResponseEntity revokeCertificate(@PathVariable String id) {
 		certificateService.revokeCertificate(id);
@@ -61,7 +52,7 @@ public class CertificateController {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	//	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/all")
 	public ResponseEntity<List<CertificateDTO>> getAll(HttpServletRequest request) {
 		return new ResponseEntity<List<CertificateDTO>>(certificateService.getAll(), HttpStatus.OK);
