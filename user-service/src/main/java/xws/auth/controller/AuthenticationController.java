@@ -1,5 +1,7 @@
 package xws.auth.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +29,8 @@ import java.util.UUID;
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthenticationController {
 
+	private static Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
+
 	@Autowired
 	private TokenUtils tokenUtils;
 
@@ -47,13 +51,14 @@ public class AuthenticationController {
 
 		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
 				authenticationRequest.getUsername(), authenticationRequest.getPassword() + u.getSalt()));
-
+		logger.warn("Cocoon");
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		User user = (User) authentication.getPrincipal();
 		String jwt = tokenUtils.generateToken(user.getUsername(), user.getRole());
 		int expiresIn = tokenUtils.getExpiredIn();
 
+		logger.info(user.getId() + ": " + "User logged in successfully");
 		return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
 	}
 
