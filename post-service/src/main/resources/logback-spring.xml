@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_PATTERN" value="%msg | %level | %d{dd-MM-yyyy HH:mm:ss} %n" />
+    <property name="APP_LOG_ROOT" value="D:\\xws\\xws\\post-service"/>
+    <!--    <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}}"/>-->
+    <!--    <property name="LOGS_HOME" value="/var/applications/myProject/applogs/" />-->
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="infoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${APP_LOG_ROOT}/info.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${APP_LOG_ROOT}/info-%d{dd-MM-yyyy-HH-mm-ss}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>50KB</totalSizeCap>
+            <!--            <maxFileSize>2KB</maxFileSize>-->
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+
+        <!--        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">-->
+        <!--            <maxFileSize>2KB</maxFileSize>-->
+        <!--        </triggeringPolicy>-->
+    </appender>
+
+    <appender name="errorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${APP_LOG_ROOT}/error.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${APP_LOG_ROOT}/error-%d{dd-MM-yyyy-HH-mm-ss}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>50KB</totalSizeCap>
+            <!--            <maxFileSize>2KB</maxFileSize>-->
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!--        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">-->
+        <!--            <maxFileSize>2KB</maxFileSize>-->
+        <!--        </triggeringPolicy>-->
+    </appender>
+
+    <appender name="warnLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${APP_LOG_ROOT}/warn.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${APP_LOG_ROOT}/warn-%d{dd-MM-yyyy-HH-mm-ss}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>2KB</totalSizeCap>
+            <!--            <maxFileSize>2KB</maxFileSize>-->
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!--        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">-->
+        <!--            <maxFileSize>2KB</maxFileSize>-->
+        <!--        </triggeringPolicy>-->
+    </appender>
+
+    <!--    <logger name="xws.auth.controller" level="info" additivity="false">-->
+    <!--        <appender-ref ref="applicationLog" />-->
+
+    <!--    </logger>-->
+    <logger name="xws.auth.controller" level="all">
+        <appender-ref ref="infoLog" />
+        <appender-ref ref="errorLog" />
+        <appender-ref ref="warnLog" />
+    </logger>
+
+
+    <!--    <root level="info">-->
+    <!--        <appender-ref ref="applicationLog" />-->
+    <!--    </root>-->
+
+</configuration>
