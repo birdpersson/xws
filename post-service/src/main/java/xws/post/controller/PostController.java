@@ -80,6 +80,12 @@ public class PostController {
 		return new ResponseEntity<>(postService.like(post, username), HttpStatus.CREATED);
 	}
 
+	@GetMapping("/collections")
+	public ResponseEntity findAllCollections( HttpServletRequest request) {
+		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
+		return new ResponseEntity(collectionService.findByUsername(username), HttpStatus.OK);
+	}
+
 	@PostMapping("/{id}/dislike")
 	public ResponseEntity<Post> dislikePost(@PathVariable String id, HttpServletRequest request) {
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
