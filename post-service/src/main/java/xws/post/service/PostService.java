@@ -6,6 +6,7 @@ import xws.post.domain.Post;
 import xws.post.dto.PostDTO;
 import xws.post.repository.PostRepository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -59,7 +60,7 @@ public class PostService {
 		return postRepository.save(p);
 	}
 
-	public Post like(Post post, String username) {
+	public List<Integer> like(Post post, String username) {
 		Set<String> likes = post.getLikes();
 		Set<String> dislikes = post.getDislikes();
 
@@ -68,11 +69,14 @@ public class PostService {
 
 		post.setLikes(likes);
 		post.setDislikes(dislikes);
-
-		return postRepository.save(post);
+		postRepository.save(post);
+		List<Integer> count = new ArrayList<Integer>();
+		count.add(likes.size());
+		count.add(dislikes.size());
+		return count;
 	}
 
-	public Post dislike(Post post, String username) {
+	public List<Integer> dislike(Post post, String username) {
 		Set<String> dislikes = post.getDislikes();
 		Set<String> likes = post.getLikes();
 
@@ -81,8 +85,21 @@ public class PostService {
 
 		post.setDislikes(dislikes);
 		post.setLikes(likes);
+		postRepository.save(post);
+		List<Integer> count = new ArrayList<Integer>();
+		count.add(likes.size());
+		count.add(dislikes.size());
+		return count;
+	}
 
-		return postRepository.save(post);
+	public List<Integer> getLikesDislikes(Post post){
+		Set<String> dislikes = post.getDislikes();
+		Set<String> likes = post.getLikes();
+
+		List<Integer> count = new ArrayList<Integer>();
+		count.add(likes.size());
+		count.add(dislikes.size());
+		return count;
 	}
 
 }

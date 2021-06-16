@@ -72,12 +72,12 @@ public class PostController {
 		return ResponseEntity.ok(postService.findAllByHashtag(hashtag));
 	}
 
-	@PostMapping("/{id}/like")
-	public ResponseEntity<Post> likePost(@PathVariable String id, HttpServletRequest request) {
+	@GetMapping("/{id}/like")
+	public ResponseEntity<List<Integer>> likePost(@PathVariable String id, HttpServletRequest request) {
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
 		Post post = postService.findById(Long.parseLong(id));
 		collectionService.addToLikes(post, username);
-		return new ResponseEntity<>(postService.like(post, username), HttpStatus.CREATED);
+		return new ResponseEntity<List<Integer>>(postService.like(post, username), HttpStatus.CREATED);
 	}
 
 	@GetMapping("/collections")
@@ -86,12 +86,12 @@ public class PostController {
 		return new ResponseEntity(collectionService.findByUsername(username), HttpStatus.OK);
 	}
 
-	@PostMapping("/{id}/dislike")
-	public ResponseEntity<Post> dislikePost(@PathVariable String id, HttpServletRequest request) {
+	@GetMapping("/{id}/dislike")
+	public ResponseEntity<List<Integer>> dislikePost(@PathVariable String id, HttpServletRequest request) {
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
 		Post post = postService.findById(Long.parseLong(id));
 		collectionService.addToDislikes(post, username);
-		return new ResponseEntity<>(postService.dislike(post, username), HttpStatus.CREATED);
+		return new ResponseEntity<List<Integer>>(postService.dislike(post, username), HttpStatus.CREATED);
 	}
 
 	@PostMapping("/{id}/favorite")
@@ -103,7 +103,7 @@ public class PostController {
 
 	@CrossOrigin
 	@PostMapping("/{id}/comment")
-	public ResponseEntity<Comment> comment(@PathVariable String id, @RequestBody String text, HttpServletRequest request) {
+	public ResponseEntity comment(@PathVariable String id, @RequestBody String text, HttpServletRequest request) {
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
 		Post post = postService.findById(Long.parseLong(id));
 		return new ResponseEntity<>(commentService.save(username, post, text), HttpStatus.CREATED);
@@ -114,6 +114,12 @@ public class PostController {
 	public ResponseEntity<CommentDTO> getComments(@PathVariable String id){
 
 		return new ResponseEntity(commentService.getCommentsForPost(id), HttpStatus.OK);
+	}
+
+	@GetMapping("getLikeDislike/{id}")
+	public ResponseEntity<List<Integer>> getLikesDislikes(@PathVariable String id){
+		Post post = postService.findById(Long.parseLong(id));
+		return  new ResponseEntity<List<Integer>>(postService.getLikesDislikes(post), HttpStatus.OK);
 	}
 
 }

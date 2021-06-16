@@ -45,11 +45,12 @@ public class MediaService {
 					Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
 				}
 				//TODO: convert to urls
-				String hostName = InetAddress.getLocalHost().getHostName();
-				String port = env.getProperty("local.server.port");
-				String fileUrl = String.format("http://%s:%s%s/%s", hostName, port, path, fileName);
-
-				paths.add(fileUrl);
+//				String hostName = InetAddress.getLocalHost().getHostName();
+//				String port = env.getProperty("local.server.port");
+//				String fileUrl = String.format("http://%s:%s%s/%s", hostName, port, path, fileName);
+//
+//				paths.add(fileUrl);
+				paths.add(path + File.separator + fileName);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -33,13 +33,15 @@ public class CommentService {
 		return commentRepository.findAllByPost(post);
 	}
 
-	public Comment save(String username, Post post, String text) {
+	public Integer save(String username, Post post, String text) {
 		Comment c = new Comment();
 		c.setCreated(new Date());
 		c.setUsername(username);
 		c.setPost(post);
 		c.setText(text);
-		return commentRepository.save(c);
+		commentRepository.save(c);
+		Integer count = commentRepository.findAllByPost(post).size();
+		return count;
 	}
 
 	public List<CommentDTO>getCommentsForPost(String postID){
