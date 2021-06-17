@@ -25,6 +25,9 @@ public class User implements UserDetails {
 	private String password;
 
 	@Column
+	private String role;
+
+	@Column
 	private String name;
 
 	@Column
@@ -49,16 +52,31 @@ public class User implements UserDetails {
 	private boolean enabled;
 
 	@Column
-	private Boolean privacy;
+	private boolean verified;
 
 	@Column
-	private String role;
+	private boolean privacy;
+
+	@Column
+	private boolean allowMessages;
+
+	@Column
+	private boolean allowTags;
+
+	@OneToMany
+	private List<User> muted;
+
+	@OneToMany
+	private List<User> blocked;
 
 	@OneToMany
 	private List<User> following;
 
 	@OneToMany
 	private List<User> followers;
+
+	@OneToMany
+	private List<Notifications> settings;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_authority",
@@ -90,6 +108,14 @@ public class User implements UserDetails {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	public String getName() {
@@ -157,20 +183,52 @@ public class User implements UserDetails {
 		this.enabled = enabled;
 	}
 
-	public Boolean isPrivate() {
+	public boolean isVerified() {
+		return verified;
+	}
+
+	public void setVerified(boolean verified) {
+		this.verified = verified;
+	}
+
+	public boolean isPrivate() {
 		return privacy;
 	}
 
-	public void setPrivacy(Boolean privacy) {
+	public void setPrivacy(boolean privacy) {
 		this.privacy = privacy;
 	}
 
-	public String getRole() {
-		return role;
+	public boolean getAllowMessages() {
+		return allowMessages;
 	}
 
-	public void setRole(String role) {
-		this.role = role;
+	public void setAllowMessages(boolean allowMessages) {
+		this.allowMessages = allowMessages;
+	}
+
+	public boolean getAllowTags() {
+		return allowTags;
+	}
+
+	public void setAllowTags(boolean allowTags) {
+		this.allowTags = allowTags;
+	}
+
+	public List<User> getMuted() {
+		return muted;
+	}
+
+	public void setMuted(List<User> muted) {
+		this.muted = muted;
+	}
+
+	public List<User> getBlocked() {
+		return blocked;
+	}
+
+	public void setBlocked(List<User> blocked) {
+		this.blocked = blocked;
 	}
 
 	public List<User> getFollowing() {
@@ -187,6 +245,14 @@ public class User implements UserDetails {
 
 	public void setFollowers(List<User> followers) {
 		this.followers = followers;
+	}
+
+	public List<Notifications> getSettings() {
+		return settings;
+	}
+
+	public void setSettings(List<Notifications> settings) {
+		this.settings = settings;
 	}
 
 	@Override
