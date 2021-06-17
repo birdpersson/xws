@@ -18,7 +18,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -69,12 +71,12 @@ public class MediaService {
 
 
 
-	public void save(MultipartFile file, String username) {
+	public void save(MultipartFile file, String username, String date) {
 		String ext = FilenameUtils.getExtension(file.getOriginalFilename());
 		String fileName = UUID.randomUUID() + "." + ext;
-
+		System.out.println(date);
 		String home = System.getProperty("user.home");
-		String path = home + File.separator + "clone" + File.separator + "images" + File.separator + username;
+		String path = home + File.separator + "clone" + File.separator + "images" + File.separator + username + File.separator + date;
 		try {
 			Path uploadPath = Paths.get(path);
 			if (!Files.exists(uploadPath))
@@ -87,10 +89,10 @@ public class MediaService {
 	}
 
 
-	public Resource load(String filename, String username) {
+	public Resource load(String filename, String username, String date) {
 
 		String home = System.getProperty("user.home");
-		String path = home + File.separator + "clone" + File.separator + "images" + File.separator + username;
+		String path = home + File.separator + "clone" + File.separator + "images" + File.separator + username + File.separator + date;
 		try {
 			Path getPath = Paths.get(path);
 			Path file = getPath.resolve(filename);
@@ -108,11 +110,11 @@ public class MediaService {
 	}
 
 
-	public Stream<Path> loadAll(String username) {
+	public Stream<Path> loadAll(String username, String date) {
 
 
 		String home = System.getProperty("user.home");
-		String filePath = home + File.separator + "clone" + File.separator + "images" + File.separator + username;
+		String filePath = home + File.separator + "clone" + File.separator + "images" + File.separator + username + File.separator + date;
 		try {
 			Path getPath = Paths.get(filePath);
 			Stream<Path> stream = Files.walk(getPath, 2).filter(path -> !path.equals(getPath)).map(getPath::relativize);
