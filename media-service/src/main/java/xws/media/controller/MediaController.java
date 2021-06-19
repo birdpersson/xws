@@ -12,8 +12,11 @@ import xws.media.service.MediaService;
 import xws.media.util.TokenUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,9 +44,10 @@ public class MediaController {
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
 		try {
 			List<String> fileNames = new ArrayList<>();
-
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+			LocalDateTime now = LocalDateTime.now();
 			Arrays.asList(files).stream().forEach(file -> {
-				mediaService.save(file,username);
+				mediaService.save(file,username, dtf.format(now));
 				fileNames.add(file.getOriginalFilename());
 			});
 
@@ -59,10 +63,12 @@ public class MediaController {
 	@GetMapping("/files")
 	public ResponseEntity<List<String>> getListFiles(HttpServletRequest request) {
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
-		List<String> fileInfos = mediaService.loadAll(username).map(path -> {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+		LocalDateTime now = LocalDateTime.now();
+		List<String> fileInfos = mediaService.loadAll(username, dtf.format(now)).map(path -> {
 
 			String url = MvcUriComponentsBuilder
-					.fromMethodName(MediaController.class, "getFile", path.getFileName().toString(),username).build().toString();
+					.fromMethodName(MediaController.class, "getFile", path.getFileName().toString(),request).build().toString();
 
 			return url;
 		}).collect(Collectors.toList());
@@ -74,7 +80,9 @@ public class MediaController {
 	@GetMapping("/files/{filename:.+}")
 	public ResponseEntity<Resource> getFile(@PathVariable String filename, HttpServletRequest request) {
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
-		Resource file = mediaService.load(filename, username);
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
+		LocalDateTime now = LocalDateTime.now();
+		Resource file = mediaService.load(filename, username, dtf.format(now));
 
 		return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
