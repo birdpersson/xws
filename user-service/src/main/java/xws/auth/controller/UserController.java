@@ -9,22 +9,28 @@ import xws.auth.dto.UserRegistrationDTO;
 import xws.auth.exception.UsernameNotUniqueException;
 import xws.auth.service.UserService;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(value = "/user")
 public class UserController {
 
-    @Autowired
-    UserService userService;
+	@Autowired
+	UserService userService;
 
-    @GetMapping(value = "/search/{query}")
-    public ResponseEntity search(@PathVariable String query) {
-        return ResponseEntity.ok(userService.search(query));
-    }
+	@GetMapping(value = "/search/{query}")
+	public ResponseEntity search(@PathVariable String query) {
+		return ResponseEntity.ok(userService.search(query));
+	}
 
-    @PostMapping("/signup")
-    public ResponseEntity<User> addUser(@RequestBody UserRegistrationDTO userDTO) throws UsernameNotUniqueException {
-        return new ResponseEntity(userService.register(userDTO), HttpStatus.CREATED);
-    }
+	@PostMapping("/signup")
+	public ResponseEntity<User> addUser(@RequestBody UserRegistrationDTO userDTO) throws UsernameNotUniqueException {
+		return new ResponseEntity(userService.register(userDTO), HttpStatus.CREATED);
+	}
+
+	@PutMapping("verify/{username}")
+	public ResponseEntity<User> verifyUser(@PathVariable String username) {
+		User user = userService.findByUsername(username);
+		user.setVerified(true); //TODO: move to service
+		return new ResponseEntity<>(userService.update(user), HttpStatus.CREATED);
+	}
+
 }
