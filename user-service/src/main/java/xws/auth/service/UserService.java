@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import xws.auth.domain.Authority;
 import xws.auth.domain.User;
 import xws.auth.dto.ChangeInfo;
+import xws.auth.dto.CheckFollowDTO;
 import xws.auth.dto.UserRegistrationDTO;
 import xws.auth.exception.UsernameNotUniqueException;
 import xws.auth.repository.UserRepository;
@@ -41,9 +42,7 @@ public class UserService implements UserDetailsService {
 		return userRepository.findByUsername(username);
 	}
 
-	public List<User> search(String query){
-		return userRepository.search(query);
-	}
+
 
 	public User updateInfo(ChangeInfo dto, User user){
 		user.setBio(dto.getBio());
@@ -118,6 +117,20 @@ public class UserService implements UserDetailsService {
 		return userRepository.save(issuer);
 	}
 
+	public User denyFollower(String issuerId, String subjectId) {
+		User subject = userRepository.findByUsername(subjectId);
+		User issuer = userRepository.findByUsername(issuerId);
+
+		List<User> followers = subject.getFollowers();
+
+		followers.remove(issuer);
+
+		subject.setFollowers(followers);
+
+		userRepository.save(subject);
+		return userRepository.save(issuer);
+	}
+
 	public List<String> getFriends(String username){
 		User user = userRepository.findByUsername(username);
 		List<User> following = user.getFollowing();
@@ -128,6 +141,21 @@ public class UserService implements UserDetailsService {
 		}
 
 		return usernames;
+	}
+
+	public CheckFollowDTO checkFollowing(String username, String subjectId){
+		User issuer = userRepository.findByUsername(username);
+		List<User> following = issuer.getFollowing();
+		for(User users : following){
+			if(users.getUsername().equals(subjectId)){
+				CheckFollowDTO follow = new CheckFollowDTO(subjectId, true);
+				return follow;
+			}
+		}
+		CheckFollowDTO follow = new CheckFollowDTO(subjectId, false);
+		return follow;
+
+
 	}
 
   public List<User> search(String query){

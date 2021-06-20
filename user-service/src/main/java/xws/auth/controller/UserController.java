@@ -32,4 +32,5 @@ public class UserController {
     public ResponseEntity<User> addUser(@RequestBody UserRegistrationDTO userDTO) throws UsernameNotUniqueException {
         return new ResponseEntity(userService.register(userDTO), HttpStatus.CREATED);
     }
+
 }
