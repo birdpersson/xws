@@ -28,11 +28,12 @@ public class VerificationController {
 	}
 
 	@PostMapping("/")
-	public ResponseEntity<Verification> sendRequest(VerificationDTO dto, HttpServletRequest request) {
+	public ResponseEntity<Verification> sendRequest(@RequestBody VerificationDTO dto, HttpServletRequest request) {
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
 		return new ResponseEntity<>(verificationService.create(dto, username), HttpStatus.CREATED);
 	}
 
+	@CrossOrigin
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteRequest(@PathVariable String id) {
 		Verification verification = verificationService.findById(Long.parseLong(id));
