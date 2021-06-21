@@ -12,7 +12,8 @@ import xws.auth.service.VerificationService;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-@RestController(value = "/verification")
+@RestController
+@RequestMapping("/verification")
 public class VerificationController {
 
 	@Autowired
