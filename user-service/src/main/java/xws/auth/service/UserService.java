@@ -8,8 +8,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import xws.auth.domain.Authority;
+import xws.auth.domain.Notifications;
 import xws.auth.domain.User;
 import xws.auth.dto.ChangeInfo;
+import xws.auth.dto.NotificationDTO;
 import xws.auth.dto.UserRegistrationDTO;
 import xws.auth.exception.UsernameNotUniqueException;
 import xws.auth.repository.UserRepository;
@@ -86,6 +88,39 @@ public class UserService implements UserDetailsService {
 		return u;
 	}
 
+	public User settings(NotificationDTO dto, String issuerId, String subjectId) {
+		User issuer = userRepository.findByUsername(issuerId);
+
+		Notifications n = new Notifications();
+		n.setUsername(subjectId);
+		n.setStories(dto.getStories());
+		n.setPosts(dto.getPosts());
+		n.setComments(dto.getComments());
+		n.setMessages(dto.getMessages());
+
+		List<Notifications> settings = issuer.getSettings();
+		settings.add(n);
+
+		return userRepository.save(issuer);
+	}
+
+	public User muteUser(String issuerId, String subjectId) {
+		User issuer = userRepository.findByUsername(issuerId);
+		User subject = userRepository.findByUsername(subjectId);
+
+		List<User> muted = issuer.getMuted();
+		muted.add(subject);
+		return userRepository.save(issuer);
+	}
+
+	public User blockUser(String issuerId, String subjectId) {
+		User issuer = userRepository.findByUsername(issuerId);
+		User subject = userRepository.findByUsername(subjectId);
+
+		List<User> blocked = issuer.getBlocked();
+		blocked.add(subject);
+		return userRepository.save(issuer);
+	}
 
 	public User followUser(String issuerId, String subjectId) {
 		User issuer = userRepository.findByUsername(issuerId);
