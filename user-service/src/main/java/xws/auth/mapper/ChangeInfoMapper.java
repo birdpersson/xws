@@ -1,12 +1,12 @@
 package xws.auth.mapper;
 
 import xws.auth.domain.User;
-import xws.auth.dto.ChangeInfo;
+import xws.auth.dto.ProfileDTO;
 
 public class ChangeInfoMapper {
 
-    public static ChangeInfo userToChangeInfo(User user){
-        ChangeInfo dto = new ChangeInfo();
+    public static ProfileDTO userToChangeInfo(User user){
+        ProfileDTO dto = new ProfileDTO();
         dto.setDate(user.getBirthday());
         dto.setPhone(user.getPhone());
         dto.setGender(user.getGender());

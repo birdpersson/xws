@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import xws.auth.domain.Authority;
 import xws.auth.domain.Notifications;
 import xws.auth.domain.User;
-import xws.auth.dto.ChangeInfo;
 import xws.auth.dto.NotificationDTO;
+import xws.auth.dto.ProfileDTO;
 import xws.auth.dto.UserRegistrationDTO;
 import xws.auth.exception.UsernameNotUniqueException;
 import xws.auth.repository.UserRepository;
@@ -47,7 +47,7 @@ public class UserService implements UserDetailsService {
 		return userRepository.save(user);
 	}
 
-	public User updateInfo(ChangeInfo dto, User user) {
+	public User updateInfo(ProfileDTO dto, User user) {
 		user.setBio(dto.getBio());
 		user.setEmail(dto.getEmail());
 		user.setUsername(dto.getUsername());
@@ -57,6 +57,10 @@ public class UserService implements UserDetailsService {
 		user.setBirthday(dto.getDate());
 		user.setWebsite(dto.getWebsite());
 		user.setPhone(dto.getPhone());
+
+		user.setAllowMessages(dto.getAllowMessages());
+		user.setAllowTags(dto.getAllowTags());
+		user.setPrivacy(dto.isPrivate());
 
 		return userRepository.save(user);
 	}
@@ -69,6 +73,8 @@ public class UserService implements UserDetailsService {
 		u.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 		u.setEnabled(true);
 		u.setPrivacy(true);
+		u.setAllowTags(true);
+		u.setAllowMessages(true);
 		u.setName(userDTO.getName());
 		u.setBio(userDTO.getBio());
 		u.setBirthday(userDTO.getBirthday());
@@ -77,8 +83,6 @@ public class UserService implements UserDetailsService {
 		u.setWebsite(userDTO.getWebsite());
 		u.setPhone(userDTO.getPhone());
 
-		/*u.setToken(UUID.randomUUID().toString());
-		u.setExpiry(new Date((new Date().getTime() + 300000)));*/
 		u.setRole("USER");
 
 		List<Authority> auth = authService.findByName("ROLE_USER");
