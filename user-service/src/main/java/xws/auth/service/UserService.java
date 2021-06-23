@@ -17,6 +17,7 @@ import xws.auth.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -88,13 +89,13 @@ public class UserService implements UserDetailsService {
 		User issuer = userRepository.findByUsername(issuerId);
 		User subject = userRepository.findByUsername(subjectId);
 		if (subject.isPrivate()) {
-			List<User> followers = subject.getFollowers();
-			followers.add(issuer);
+			Set<String> followers = subject.getFollowers();
+			followers.add(issuer.getUsername());
 			subject.setFollowers(followers);
 			return userRepository.save(subject);
 		} else {
-			List<User> following = issuer.getFollowing();
-			following.add(subject);
+			Set<String> following = issuer.getFollowing();
+			following.add(subject.getUsername());
 			issuer.setFollowing(following);
 			return userRepository.save(issuer);
 		}
@@ -104,11 +105,11 @@ public class UserService implements UserDetailsService {
 		User subject = userRepository.findByUsername(subjectId);
 		User issuer = userRepository.findByUsername(issuerId);
 
-		List<User> followers = subject.getFollowers();
-		List<User> following = issuer.getFollowing();
+		Set<String> followers = subject.getFollowers();
+		Set<String> following = issuer.getFollowing();
 
-		followers.remove(issuer);
-		following.add(subject);
+		followers.remove(issuer.getUsername());
+		following.add(subject.getUsername());
 
 		issuer.setFollowing(following);
 		subject.setFollowers(followers);
@@ -121,9 +122,9 @@ public class UserService implements UserDetailsService {
 		User subject = userRepository.findByUsername(subjectId);
 		User issuer = userRepository.findByUsername(issuerId);
 
-		List<User> followers = subject.getFollowers();
+		Set<String> followers = subject.getFollowers();
 
-		followers.remove(issuer);
+		followers.remove(issuer.getUsername());
 
 		subject.setFollowers(followers);
 
@@ -133,21 +134,27 @@ public class UserService implements UserDetailsService {
 
 	public List<String> getFriends(String username){
 		User user = userRepository.findByUsername(username);
-		List<User> following = user.getFollowing();
+		Set<String> following = user.getFollowing();
 		List<String> usernames = new ArrayList<String>();
 
-		for(User u : following){
-			usernames.add(u.getUsername());
+		for(String u : following){
+			usernames.add(u);
 		}
 
 		return usernames;
 	}
 
+	public Set<String> getFollowRequests(String username){
+		User user = userRepository.findByUsername(username);
+		Set<String> followRequests = user.getFollowers();
+		return followRequests;
+	}
+
 	public CheckFollowDTO checkFollowing(String username, String subjectId){
 		User issuer = userRepository.findByUsername(username);
-		List<User> following = issuer.getFollowing();
-		for(User users : following){
-			if(users.getUsername().equals(subjectId)){
+		Set<String> following = issuer.getFollowing();
+		for(String users : following){
+			if(users.equals(subjectId)){
 				CheckFollowDTO follow = new CheckFollowDTO(subjectId, true);
 				return follow;
 			}
@@ -157,6 +164,34 @@ public class UserService implements UserDetailsService {
 
 
 	}
+
+	public CheckFollowDTO checkFollowRequest(String username, String subjectId){
+		Set<String> followRequest = getFollowRequests(subjectId);
+		for(String users : followRequest){
+			if(users.equals(username)){
+				CheckFollowDTO follow = new CheckFollowDTO(subjectId, true);
+				return follow;
+			}
+		}
+		CheckFollowDTO follow = new CheckFollowDTO(subjectId, false);
+		return follow;
+
+
+	}
+
+	public CheckFollowDTO checkYourPage(String username, String subjectId){
+			if(username.equals(subjectId)){
+				CheckFollowDTO follow = new CheckFollowDTO(subjectId, true);
+				return follow;
+			}else {
+
+				CheckFollowDTO follow = new CheckFollowDTO(subjectId, false);
+				return follow;
+			}
+
+
+	}
+
 
   public List<User> search(String query){
 		return userRepository.search(query);

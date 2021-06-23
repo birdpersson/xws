@@ -5,9 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "USERS")
@@ -54,11 +52,11 @@ public class User implements UserDetails {
 	@Column
 	private String role;
 
-	@OneToMany
-	private List<User> following;
+	@ElementCollection
+	private Set<String> following =  new HashSet<>();
 
-	@OneToMany
-	private List<User> followers;
+	@ElementCollection
+	private Set<String> followers =  new HashSet<>();
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_authority",
@@ -173,19 +171,19 @@ public class User implements UserDetails {
 		this.role = role;
 	}
 
-	public List<User> getFollowing() {
+	public Set<String> getFollowing() {
 		return following;
 	}
 
-	public void setFollowing(List<User> following) {
+	public void setFollowing(Set<String> following) {
 		this.following = following;
 	}
 
-	public List<User> getFollowers() {
+	public Set<String> getFollowers() {
 		return followers;
 	}
 
-	public void setFollowers(List<User> followers) {
+	public void setFollowers(Set<String> followers) {
 		this.followers = followers;
 	}
 

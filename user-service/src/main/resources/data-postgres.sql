@@ -12,7 +12,5 @@ INSERT INTO AUTHORITY (name) VALUES ('ROLE_ADMIN');
 INSERT INTO USER_AUTHORITY (user_id, authority_id) VALUES (1, 1);
 INSERT INTO USER_AUTHORITY (user_id, authority_id) VALUES (2, 2);
 
-INSERT INTO USERS_FOLLOWING (user_id, following_id) VALUES (1, 2);
-INSERT INTO USERS_FOLLOWING (user_id, following_id) VALUES (1, 3);
 
 
