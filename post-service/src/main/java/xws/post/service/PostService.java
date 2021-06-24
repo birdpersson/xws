@@ -60,8 +60,8 @@ public class PostService {
 	}
 
 	public List<Integer> like(Post post, String username) {
-		List<String> likes = post.getLikes();
-		List<String> dislikes = post.getDislikes();
+		Set<String> likes = post.getLikes();
+		Set<String> dislikes = post.getDislikes();
 
 		likes.add(username);
 		dislikes.remove(username);
@@ -76,8 +76,8 @@ public class PostService {
 	}
 
 	public List<Integer> dislike(Post post, String username) {
-		List<String> dislikes = post.getDislikes();
-		List<String> likes = post.getLikes();
+		Set<String> dislikes = post.getDislikes();
+		Set<String> likes = post.getLikes();
 
 		dislikes.add(username);
 		likes.remove(username);
@@ -92,8 +92,8 @@ public class PostService {
 	}
 
 	public List<Integer> getLikesDislikes(Post post){
-		List<String> dislikes = post.getDislikes();
-		List<String> likes = post.getLikes();
+		Set<String> dislikes = post.getDislikes();
+		Set<String> likes = post.getLikes();
 
 		List<Integer> count = new ArrayList<Integer>();
 		count.add(likes.size());

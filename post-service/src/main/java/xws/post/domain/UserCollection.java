@@ -17,16 +17,16 @@ public class UserCollection {
 	private String username;
 
 	@OneToMany
-	private List<Post> likes = new ArrayList<>();
+	private Set<Post> likes = new HashSet<>();
 
 	@OneToMany
-	private List<Post> dislikes = new ArrayList<>();
+	private Set<Post> dislikes = new HashSet<>();
 
 	@OneToMany
-	private List<Post> favorites = new ArrayList<>();
+	private Set<Post> favorites = new HashSet<>();
 
 	@OneToMany
-	private List<CustomCollection> collections = new ArrayList<>();
+	private Set<CustomCollection> collections = new HashSet<>();
 
 	public Long getId() {
 		return id;
@@ -44,35 +44,35 @@ public class UserCollection {
 		this.username = username;
 	}
 
-	public List<Post> getLikes() {
+	public Set<Post> getLikes() {
 		return likes;
 	}
 
-	public void setLikes(List<Post> likes) {
+	public void setLikes(Set<Post> likes) {
 		this.likes = likes;
 	}
 
-	public List<Post> getDislikes() {
+	public Set<Post> getDislikes() {
 		return dislikes;
 	}
 
-	public void setDislikes(List<Post> dislikes) {
+	public void setDislikes(Set<Post> dislikes) {
 		this.dislikes = dislikes;
 	}
 
-	public List<Post> getFavorites() {
+	public Set<Post> getFavorites() {
 		return favorites;
 	}
 
-	public void setFavorites(List<Post> favorites) {
+	public void setFavorites(Set<Post> favorites) {
 		this.favorites = favorites;
 	}
 
-	public List<CustomCollection> getCollections() {
+	public Set<CustomCollection> getCollections() {
 		return collections;
 	}
 
-	public void setCollections(List<CustomCollection> collections) {
+	public void setCollections(Set<CustomCollection> collections) {
 		this.collections = collections;
 	}
 

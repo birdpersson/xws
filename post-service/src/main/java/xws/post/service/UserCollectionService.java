@@ -33,7 +33,7 @@ public class UserCollectionService {
 
 	public UserCollection addToFavorites(Post post, String username) {
 		UserCollection c = findByUsername(username);
-		List<Post> favorites = c.getFavorites();
+		Set<Post> favorites = c.getFavorites();
 		if(!favorites.contains(post))
 			favorites.add(post);
 		c.setFavorites(favorites);
@@ -42,7 +42,7 @@ public class UserCollectionService {
 
 	public UserCollection removeFromFavorites(Post post, String username) {
 		UserCollection c = findByUsername(username);
-		List<Post> favorites = c.getFavorites();
+		Set<Post> favorites = c.getFavorites();
 		favorites.remove(post);
 		c.setFavorites(favorites);
 		return userCollectionRepository.save(c);
@@ -50,8 +50,8 @@ public class UserCollectionService {
 
 	public UserCollection addToLikes(Post post, String username) {
 		UserCollection c = findByUsername(username);
-		List<Post> likes = c.getLikes();
-		List<Post> dislikes = c.getDislikes();
+		Set<Post> likes = c.getLikes();
+		Set<Post> dislikes = c.getDislikes();
 		likes.add(post);
 		dislikes.remove(post);
 		c.setLikes(likes);
@@ -61,8 +61,8 @@ public class UserCollectionService {
 
 	public UserCollection addToDislikes(Post post, String username) {
 		UserCollection c = findByUsername(username);
-		List<Post> dislikes = c.getDislikes();
-		List<Post> likes = c.getLikes();
+		Set<Post> dislikes = c.getDislikes();
+		Set<Post> likes = c.getLikes();
 		dislikes.add(post);
 		likes.remove(post);
 		c.setLikes(likes);
@@ -73,7 +73,7 @@ public class UserCollectionService {
 
 	public UserCollection addToCollections(CustomCollection collection, String username) {
 		UserCollection c = findByUsername(username);
-		List<CustomCollection> collections = c.getCollections();
+		Set<CustomCollection> collections = c.getCollections();
 		collections.add(collection);
 		c.setCollections(collections);
 		return userCollectionRepository.save(c);
@@ -81,7 +81,7 @@ public class UserCollectionService {
 
 	public List<CollectionPostDTO> getFavoritesForUser(String username){
 		UserCollection uc = findByUsername(username);
-		List<Post> favorites =  uc.getFavorites();
+		Set<Post> favorites =  uc.getFavorites();
 		List<CollectionPostDTO> dtos = new ArrayList<>();
 
 		for(Post p : favorites){
