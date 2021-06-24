@@ -33,7 +33,7 @@ public class UserController {
     public ResponseEntity getProfileInfo(@PathVariable String username) {
         return ResponseEntity.ok(userService.findByUsername(username));
     }
-    
+    @CrossOrigin
     @PostMapping("/signup")
     public ResponseEntity<User> addUser(@RequestBody UserRegistrationDTO userDTO) throws UsernameNotUniqueException {
         return new ResponseEntity(userService.register(userDTO), HttpStatus.CREATED);
