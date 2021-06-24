@@ -7,8 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import xws.post.domain.Comment;
 import xws.post.domain.Post;
 import xws.post.domain.UserCollection;
+import xws.post.dto.CollectionPostDTO;
 import xws.post.dto.CommentDTO;
+import xws.post.dto.GetPostDTO;
 import xws.post.dto.PostDTO;
+import xws.post.mapper.PostMapper;
 import xws.post.service.CommentService;
 import xws.post.service.PostService;
 import xws.post.service.UserCollectionService;
@@ -101,6 +104,13 @@ public class PostController {
 		return new ResponseEntity<>(collectionService.addToFavorites(post, username), HttpStatus.CREATED);
 	}
 
+	@PostMapping("/{id}/unfavorite")
+	public ResponseEntity<UserCollection> unfavorite(@PathVariable String id, HttpServletRequest request) {
+		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
+		Post post = postService.findById(Long.parseLong(id));
+		return new ResponseEntity<>(collectionService.removeFromFavorites(post, username), HttpStatus.CREATED);
+	}
+
 	@CrossOrigin
 	@PostMapping("/{id}/comment")
 	public ResponseEntity comment(@PathVariable String id, @RequestBody String text, HttpServletRequest request) {
@@ -122,4 +132,15 @@ public class PostController {
 		return  new ResponseEntity<List<Integer>>(postService.getLikesDislikes(post), HttpStatus.OK);
 	}
 
+	@GetMapping("/getFollowingPosts")
+	public ResponseEntity<GetPostDTO> getFollowingPosts(HttpServletRequest request){
+		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
+		return new ResponseEntity(postService.getFollowingPosts(username),HttpStatus.OK);
+	}
+
+	@GetMapping("getPostById/{id}")
+	public ResponseEntity<GetPostDTO> getPostById(@PathVariable String id){
+		Post p = postService.findById(Long.parseLong(id));
+		return new ResponseEntity(PostMapper.postToGetPostDTO(p), HttpStatus.OK);
+	}
 }

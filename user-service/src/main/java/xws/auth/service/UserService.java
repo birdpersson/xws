@@ -124,8 +124,8 @@ public class UserService implements UserDetailsService {
 
 	public List<String> getFriends(String username){
 		User user = userRepository.findByUsername(username);
-		List<User> following = user.getFollowing();
-		List<String> usernames = new ArrayList<String>();
+		List<User> following = user.getFollowers();
+		List<String> usernames = new ArrayList<>();
 
 		for(User u : following){
 			usernames.add(u.getUsername());

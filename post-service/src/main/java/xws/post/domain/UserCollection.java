@@ -1,7 +1,9 @@
 package xws.post.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,16 +17,16 @@ public class UserCollection {
 	private String username;
 
 	@OneToMany
-	private Set<Post> likes = new HashSet<>();
+	private List<Post> likes = new ArrayList<>();
 
 	@OneToMany
-	private Set<Post> dislikes = new HashSet<>();
+	private List<Post> dislikes = new ArrayList<>();
 
 	@OneToMany
-	private Set<Post> favorites = new HashSet<>();
+	private List<Post> favorites = new ArrayList<>();
 
 	@OneToMany
-	private Set<CustomCollection> collections = new HashSet<>();
+	private List<CustomCollection> collections = new ArrayList<>();
 
 	public Long getId() {
 		return id;
@@ -42,35 +44,35 @@ public class UserCollection {
 		this.username = username;
 	}
 
-	public Set<Post> getLikes() {
+	public List<Post> getLikes() {
 		return likes;
 	}
 
-	public void setLikes(Set<Post> likes) {
+	public void setLikes(List<Post> likes) {
 		this.likes = likes;
 	}
 
-	public Set<Post> getDislikes() {
+	public List<Post> getDislikes() {
 		return dislikes;
 	}
 
-	public void setDislikes(Set<Post> dislikes) {
+	public void setDislikes(List<Post> dislikes) {
 		this.dislikes = dislikes;
 	}
 
-	public Set<Post> getFavorites() {
+	public List<Post> getFavorites() {
 		return favorites;
 	}
 
-	public void setFavorites(Set<Post> favorites) {
+	public void setFavorites(List<Post> favorites) {
 		this.favorites = favorites;
 	}
 
-	public Set<CustomCollection> getCollections() {
+	public List<CustomCollection> getCollections() {
 		return collections;
 	}
 
-	public void setCollections(Set<CustomCollection> collections) {
+	public void setCollections(List<CustomCollection> collections) {
 		this.collections = collections;
 	}
 

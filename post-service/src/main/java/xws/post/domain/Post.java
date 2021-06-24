@@ -29,10 +29,10 @@ public class Post {
 	private List<String> hashtags = new ArrayList<>();
 
 	@ElementCollection
-	private Set<String> likes = new HashSet<>();
+	private List<String> likes = new ArrayList<>();
 
 	@ElementCollection
-	private Set<String> dislikes = new HashSet<>();
+	private List<String> dislikes = new ArrayList<>();
 
 	@OneToMany
 	private List<Comment> comments = new ArrayList<>();
@@ -109,19 +109,19 @@ public class Post {
 		this.hashtags = hashtags;
 	}
 
-	public Set<String> getLikes() {
+	public List<String> getLikes() {
 		return likes;
 	}
 
-	public void setLikes(Set<String> likes) {
+	public void setLikes(List<String> likes) {
 		this.likes = likes;
 	}
 
-	public Set<String> getDislikes() {
+	public List<String> getDislikes() {
 		return dislikes;
 	}
 
-	public void setDislikes(Set<String> dislikes) {
+	public void setDislikes(List<String> dislikes) {
 		this.dislikes = dislikes;
 	}
 

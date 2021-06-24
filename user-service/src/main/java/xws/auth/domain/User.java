@@ -189,6 +189,7 @@ public class User implements UserDetails {
 		this.followers = followers;
 	}
 
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return this.authorities;

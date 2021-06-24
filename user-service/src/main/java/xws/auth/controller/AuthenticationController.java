@@ -79,8 +79,8 @@ public class AuthenticationController {
 
 	@GetMapping("/getFriends")
 	public ResponseEntity<List<String>> getFriends(HttpServletRequest request){
-		//String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
-		return ResponseEntity.ok(userService.getFriends("user@gmail.com"));
+		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
+		return ResponseEntity.ok(userService.getFriends(username));
 
 	}
 }

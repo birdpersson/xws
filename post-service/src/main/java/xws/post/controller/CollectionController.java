@@ -3,13 +3,11 @@ package xws.post.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import xws.post.domain.CustomCollection;
 import xws.post.domain.UserCollection;
 import xws.post.dto.CollectionDTO;
+import xws.post.dto.CollectionPostDTO;
 import xws.post.service.CustomCollectionService;
 import xws.post.service.PostService;
 import xws.post.service.UserCollectionService;
@@ -38,6 +36,13 @@ public class CollectionController {
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
 		CustomCollection collection = customCollectionService.create(dto);
 		return new ResponseEntity<>(userCollectionService.addToCollections(collection, username), HttpStatus.CREATED);
+	}
+
+
+	@GetMapping("getFavoritesForUser")
+	public ResponseEntity<CollectionPostDTO> getFavoritesForUser(HttpServletRequest request){
+		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
+		return new ResponseEntity(userCollectionService.getFavoritesForUser(username), HttpStatus.OK);
 	}
 
 }
