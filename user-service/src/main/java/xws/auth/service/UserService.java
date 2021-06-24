@@ -2,23 +2,20 @@ package xws.auth.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import xws.auth.domain.Authority;
+import xws.auth.domain.Notifications;
 import xws.auth.domain.User;
-import xws.auth.dto.ChangeInfo;
 import xws.auth.dto.CheckFollowDTO;
+import xws.auth.dto.NotificationDTO;
+import xws.auth.dto.ProfileDTO;
 import xws.auth.dto.UserRegistrationDTO;
 import xws.auth.exception.UsernameNotUniqueException;
 import xws.auth.repository.UserRepository;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -47,11 +44,11 @@ public class UserService implements UserDetailsService {
 		return userRepository.findByUsername(username);
 	}
 
+	public User update(User user) {
+		return userRepository.save(user);
+	}
 
-
-	public User updateInfo(ChangeInfo dto, User user){
-
-
+	public User updateInfo(ProfileDTO dto, User user) {
 		user.setBio(dto.getBio());
 		user.setEmail(dto.getEmail());
 		user.setUsername(dto.getUsername());
@@ -62,17 +59,23 @@ public class UserService implements UserDetailsService {
 		user.setWebsite(dto.getWebsite());
 		user.setPhone(dto.getPhone());
 
+		user.setAllowMessages(dto.getAllowMessages());
+		user.setAllowTags(dto.getAllowTags());
+		user.setPrivacy(dto.isPrivate());
+
 		return userRepository.save(user);
 	}
-	
+
 	public User register(UserRegistrationDTO userDTO) throws UsernameNotUniqueException {
-		if(userRepository.findByUsername(userDTO.getUsername())!=null)
+		if (userRepository.findByUsername(userDTO.getUsername()) != null)
 			throw new UsernameNotUniqueException("Username " + userDTO.getUsername() + " is already registered.");
 		User u = new User();
 		u.setUsername(userDTO.getUsername());
 		u.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 		u.setEnabled(true);
 		u.setPrivacy(true);
+		u.setAllowTags(true);
+		u.setAllowMessages(true);
 		u.setName(userDTO.getName());
 		u.setBio(userDTO.getBio());
 		u.setBirthday(userDTO.getBirthday());
@@ -81,8 +84,6 @@ public class UserService implements UserDetailsService {
 		u.setWebsite(userDTO.getWebsite());
 		u.setPhone(userDTO.getPhone());
 
-		/*u.setToken(UUID.randomUUID().toString());
-		u.setExpiry(new Date((new Date().getTime() + 300000)));*/
 		u.setRole("USER");
 
 //		List<Authority> auth = authService.findByName("ROLE_USER");
@@ -92,7 +93,40 @@ public class UserService implements UserDetailsService {
 		return u;
 	}
 
-	
+	public User settings(NotificationDTO dto, String issuerId, String subjectId) {
+		User issuer = userRepository.findByUsername(issuerId);
+
+		Notifications n = new Notifications();
+		n.setUsername(subjectId);
+		n.setStories(dto.getStories());
+		n.setPosts(dto.getPosts());
+		n.setComments(dto.getComments());
+		n.setMessages(dto.getMessages());
+
+		List<Notifications> settings = issuer.getSettings();
+		settings.add(n);
+
+		return userRepository.save(issuer);
+	}
+
+	public User muteUser(String issuerId, String subjectId) {
+		User issuer = userRepository.findByUsername(issuerId);
+		User subject = userRepository.findByUsername(subjectId);
+
+		List<User> muted = issuer.getMuted();
+		muted.add(subject);
+		return userRepository.save(issuer);
+	}
+
+	public User blockUser(String issuerId, String subjectId) {
+		User issuer = userRepository.findByUsername(issuerId);
+		User subject = userRepository.findByUsername(subjectId);
+
+		List<User> blocked = issuer.getBlocked();
+		blocked.add(subject);
+		return userRepository.save(issuer);
+	}
+
 	public User followUser(String issuerId, String subjectId) {
 		User issuer = userRepository.findByUsername(issuerId);
 		User subject = userRepository.findByUsername(subjectId);
@@ -140,74 +174,65 @@ public class UserService implements UserDetailsService {
 		return userRepository.save(issuer);
 	}
 
-	public List<String> getFriends(String username){
+	public List<String> getFriends(String username) {
 		User user = userRepository.findByUsername(username);
 		Set<String> following = user.getFollowing();
-		List<String> usernames = new ArrayList<String>();
+		List<String> usernames = new ArrayList<>();
 
-		for(String u : following){
+		for (String u : following) {
 			usernames.add(u);
 		}
 
 		return usernames;
 	}
 
-
-	public Set<String> getFollowRequests(String username){
+	public Set<String> getFollowRequests(String username) {
 		User user = userRepository.findByUsername(username);
 		Set<String> followRequests = user.getFollowers();
 		return followRequests;
 	}
 
-	public CheckFollowDTO checkFollowing(String username, String subjectId){
+	public CheckFollowDTO checkFollowing(String username, String subjectId) {
 		User issuer = userRepository.findByUsername(username);
 		Set<String> following = issuer.getFollowing();
-		for(String users : following){
-			if(users.equals(subjectId)){
+		for (String users : following) {
+			if (users.equals(subjectId)) {
 				CheckFollowDTO follow = new CheckFollowDTO(subjectId, true);
 				return follow;
 			}
 		}
 		CheckFollowDTO follow = new CheckFollowDTO(subjectId, false);
 		return follow;
-
-
 	}
 
-	public CheckFollowDTO checkFollowRequest(String username, String subjectId){
+	public CheckFollowDTO checkFollowRequest(String username, String subjectId) {
 		Set<String> followRequest = getFollowRequests(subjectId);
-		for(String users : followRequest){
-			if(users.equals(username)){
+		for (String users : followRequest) {
+			if (users.equals(username)) {
 				CheckFollowDTO follow = new CheckFollowDTO(subjectId, true);
 				return follow;
 			}
 		}
 		CheckFollowDTO follow = new CheckFollowDTO(subjectId, false);
 		return follow;
-
-
 	}
 
-	public CheckFollowDTO checkYourPage(String username, String subjectId){
-			if(username.equals(subjectId)){
-				CheckFollowDTO follow = new CheckFollowDTO(subjectId, true);
-				return follow;
-			}else {
+	public CheckFollowDTO checkYourPage(String username, String subjectId) {
+		if (username.equals(subjectId)) {
+			CheckFollowDTO follow = new CheckFollowDTO(subjectId, true);
+			return follow;
+		} else {
 
-				CheckFollowDTO follow = new CheckFollowDTO(subjectId, false);
-				return follow;
-			}
-
-
+			CheckFollowDTO follow = new CheckFollowDTO(subjectId, false);
+			return follow;
+		}
 	}
 
-
-  	public List<User> search(String query){
+	public List<User> search(String query) {
 		return userRepository.search(query);
-
 	}
 
-	public List<User> findAll(){
+	public List<User> findAll() {
 		return userRepository.findAll();
 	}
 

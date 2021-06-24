@@ -11,7 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import xws.auth.domain.User;
 import xws.auth.domain.UserTokenState;
-import xws.auth.dto.ChangeInfo;
+import xws.auth.dto.ProfileDTO;
 import xws.auth.mapper.ChangeInfoMapper;
 import xws.auth.security.TokenUtils;
 import xws.auth.security.auth.JwtAuthenticationRequest;
@@ -53,16 +53,16 @@ public class AuthenticationController {
 	}
 
 	@GetMapping("/userInfo")
-	public ResponseEntity<ChangeInfo> getUserInfo(HttpServletRequest request){
+	public ResponseEntity<ProfileDTO> getUserInfo(HttpServletRequest request){
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
 
 		User user = userService.findByUsername(username);
-		ChangeInfo info = ChangeInfoMapper.userToChangeInfo(user);
+		ProfileDTO info = ChangeInfoMapper.userToChangeInfo(user);
 		return ResponseEntity.ok(info);
 	}
 
 	@PostMapping("/changeInfo")
-	public ResponseEntity changeInfo(@RequestBody ChangeInfo dto, HttpServletRequest request){
+	public ResponseEntity changeInfo(@RequestBody ProfileDTO dto, HttpServletRequest request){
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
 		User user = userService.findByUsername(username);
 		List<User> users = userService.findAll();

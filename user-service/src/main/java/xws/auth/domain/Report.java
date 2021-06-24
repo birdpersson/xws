@@ -5,56 +5,59 @@ import javax.persistence.*;
 @Entity
 public class Report {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column
-    private String username;
+	@Column
+	private String issuerUsername;
 
-    @Column
-    private String repUsername;
+	@Column
+	private String subjectUsername;
 
-    @Column
-    private String reason;
+	@Column
+	private String reportReason;
 
-    public Report(String username,String repUsername,String reason) {
+	public Report() {
 
-        this.reason = reason;
-        this.username = username;
-        this.repUsername = repUsername;
+	}
 
-    }
+	public Report(String username, String repUsername, String reason) {
+		this.reportReason = reason;
+		this.issuerUsername = username;
+		this.subjectUsername = repUsername;
+	}
 
-    public String getReason() {
-        return reason;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public String getIssuerUsername() {
+		return issuerUsername;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setIssuerUsername(String issuerUsername) {
+		this.issuerUsername = issuerUsername;
+	}
 
-    public String getUsername() {
-        return username;
-    }
+	public String getSubjectUsername() {
+		return subjectUsername;
+	}
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	public void setSubjectUsername(String subjectUsername) {
+		this.subjectUsername = subjectUsername;
+	}
 
-    public String getRepUsername() {
-        return repUsername;
-    }
+	public String getReportReason() {
+		return reportReason;
+	}
 
-    public void setRepUsername(String repUsername) {
-        this.repUsername = repUsername;
-    }
+	public void setReportReason(String reportReason) {
+		this.reportReason = reportReason;
+	}
+
 }
