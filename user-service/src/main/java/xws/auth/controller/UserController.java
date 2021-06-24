@@ -23,6 +23,7 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @CrossOrigin
     @GetMapping(value = "/search/{query}")
     public ResponseEntity search(@PathVariable String query) {
         return ResponseEntity.ok(userService.search(query));

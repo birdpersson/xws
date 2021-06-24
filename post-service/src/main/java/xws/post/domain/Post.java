@@ -35,7 +35,7 @@ public class Post {
 	private Set<String> dislikes = new HashSet<>();
 
 	@OneToMany
-	private Set<Comment> comments = new HashSet<>();
+	private List<Comment> comments = new ArrayList<>();
 
 	@ElementCollection
 	private List<String> sharedWith = new ArrayList<>();
@@ -125,11 +125,11 @@ public class Post {
 		this.dislikes = dislikes;
 	}
 
-	public Set<Comment> getComments() {
+	public List<Comment> getComments() {
 		return comments;
 	}
 
-	public void setComments(Set<Comment> comments) {
+	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
 

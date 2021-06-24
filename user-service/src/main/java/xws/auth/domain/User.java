@@ -47,7 +47,7 @@ public class User implements UserDetails {
 	private boolean enabled;
 
 	@Column
-	private boolean privacy;
+	private Boolean privacy;
 
 	@Column
 	private String role;
@@ -155,11 +155,11 @@ public class User implements UserDetails {
 		this.enabled = enabled;
 	}
 
-	public boolean isPrivate() {
+	public Boolean isPrivate() {
 		return privacy;
 	}
 
-	public void setPrivacy(boolean privacy) {
+	public void setPrivacy(Boolean privacy) {
 		this.privacy = privacy;
 	}
 
@@ -186,6 +186,7 @@ public class User implements UserDetails {
 	public void setFollowers(Set<String> followers) {
 		this.followers = followers;
 	}
+
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

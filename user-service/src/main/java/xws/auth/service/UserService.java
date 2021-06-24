@@ -2,6 +2,8 @@ package xws.auth.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,6 +17,8 @@ import xws.auth.dto.UserRegistrationDTO;
 import xws.auth.exception.UsernameNotUniqueException;
 import xws.auth.repository.UserRepository;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -46,8 +50,11 @@ public class UserService implements UserDetailsService {
 
 
 	public User updateInfo(ChangeInfo dto, User user){
+
+
 		user.setBio(dto.getBio());
 		user.setEmail(dto.getEmail());
+		user.setUsername(dto.getUsername());
 		user.setGender(dto.getGender());
 		user.setUsername(dto.getUsername());
 		user.setName(dto.getName());
@@ -57,6 +64,7 @@ public class UserService implements UserDetailsService {
 
 		return userRepository.save(user);
 	}
+	
 	public User register(UserRegistrationDTO userDTO) throws UsernameNotUniqueException {
 		if(userRepository.findByUsername(userDTO.getUsername())!=null)
 			throw new UsernameNotUniqueException("Username " + userDTO.getUsername() + " is already registered.");
@@ -77,8 +85,8 @@ public class UserService implements UserDetailsService {
 		u.setExpiry(new Date((new Date().getTime() + 300000)));*/
 		u.setRole("USER");
 
-		List<Authority> auth = authService.findByName("ROLE_USER");
-		u.setAuthorities(auth);
+//		List<Authority> auth = authService.findByName("ROLE_USER");
+//		u.setAuthorities(auth);
 
 		u = userRepository.save(u);
 		return u;
@@ -144,6 +152,7 @@ public class UserService implements UserDetailsService {
 		return usernames;
 	}
 
+
 	public Set<String> getFollowRequests(String username){
 		User user = userRepository.findByUsername(username);
 		Set<String> followRequests = user.getFollowers();
@@ -193,8 +202,13 @@ public class UserService implements UserDetailsService {
 	}
 
 
-  public List<User> search(String query){
+  	public List<User> search(String query){
 		return userRepository.search(query);
+
+	}
+
+	public List<User> findAll(){
+		return userRepository.findAll();
 	}
 
 }
