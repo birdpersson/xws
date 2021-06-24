@@ -5,9 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "USERS")
@@ -69,11 +67,11 @@ public class User implements UserDetails {
 	@OneToMany
 	private List<User> blocked;
 
-	@OneToMany
-	private List<User> following;
+	@ElementCollection
+	private Set<String> following = new HashSet<>();
 
-	@OneToMany
-	private List<User> followers;
+	@ElementCollection
+	private Set<String> followers = new HashSet<>();
 
 	@OneToMany
 	private List<Notifications> settings;
@@ -231,19 +229,19 @@ public class User implements UserDetails {
 		this.blocked = blocked;
 	}
 
-	public List<User> getFollowing() {
+	public Set<String> getFollowing() {
 		return following;
 	}
 
-	public void setFollowing(List<User> following) {
+	public void setFollowing(Set<String> following) {
 		this.following = following;
 	}
 
-	public List<User> getFollowers() {
+	public Set<String> getFollowers() {
 		return followers;
 	}
 
-	public void setFollowers(List<User> followers) {
+	public void setFollowers(Set<String> followers) {
 		this.followers = followers;
 	}
 

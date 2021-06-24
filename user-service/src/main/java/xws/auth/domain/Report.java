@@ -18,6 +18,16 @@ public class Report {
 	@Column
 	private String reportReason;
 
+	public Report() {
+
+	}
+
+	public Report(String username, String repUsername, String reason) {
+		this.reportReason = reason;
+		this.issuerUsername = username;
+		this.subjectUsername = repUsername;
+	}
+
 	public Long getId() {
 		return id;
 	}

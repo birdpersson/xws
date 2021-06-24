@@ -3,6 +3,10 @@ package xws.post.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xws.post.domain.Post;
+import xws.post.domain.UserCollection;
+import xws.post.dto.CollectionDTO;
+import xws.post.dto.CollectionPostDTO;
+import xws.post.dto.GetPostDTO;
 import xws.post.dto.PostDTO;
 import xws.post.repository.PostRepository;
 
@@ -41,11 +45,6 @@ public class PostService {
 
 	public Post save(PostDTO postDTO, String username) {
 		Post p = new Post();
-
-
-		//TODO: get username from token
-		//String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
-		//p.setUsername("user@gmail.com");
 		p.setUsername(username);
 		p.setLocation(postDTO.getLocation());
 		p.setHashtags(postDTO.getHashtags());
@@ -101,5 +100,30 @@ public class PostService {
 		count.add(dislikes.size());
 		return count;
 	}
+
+	public List<GetPostDTO> getFollowingPosts(String username){
+		List<Post> posts = postRepository.findAll();
+		List<Post> sharedPosts = new ArrayList<>();
+		for(Post p : posts){
+			if(p.getSharedWith().contains(username)){
+				sharedPosts.add(p);
+			}
+		}
+		List<GetPostDTO> dto = new ArrayList<>();
+		for(Post p : sharedPosts){
+			Long id = p.getId();
+			String un = p.getUsername();
+			String location = p.getLocation();
+			String desc = p.getCaption();
+			Date date = p.getCreated();
+			List<String> hashtags = p.getHashtags();
+			List<String> media = p.getMediaUrls();
+			dto.add(new GetPostDTO(id, un, location, desc, hashtags, date, media));
+		}
+		return dto;
+	}
+
+
+
 
 }
