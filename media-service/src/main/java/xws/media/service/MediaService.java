@@ -74,9 +74,10 @@ public class MediaService {
 	public void save(MultipartFile file, String username, String date) {
 		String ext = FilenameUtils.getExtension(file.getOriginalFilename());
 		String fileName = UUID.randomUUID() + "." + ext;
-		System.out.println(date);
+		System.out.println();
 		String home = System.getProperty("user.home");
-		String path = home + File.separator + "clone" + File.separator + "images" + File.separator + username + File.separator + date;
+		String path =
+				home + File.separator + "clone" + File.separator + "images" + File.separator + username + File.separator + date;
 		try {
 			Path uploadPath = Paths.get(path);
 			if (!Files.exists(uploadPath))
@@ -89,10 +90,11 @@ public class MediaService {
 	}
 
 
-	public Resource load(String filename, String username, String date) {
+	public Resource load(String filename, String username,String date) {
 
 		String home = System.getProperty("user.home");
-		String path = home + File.separator + "clone" + File.separator + "images" + File.separator + username + File.separator + date;
+		String path =
+				home + File.separator + "clone" + File.separator + "images" + File.separator + username + File.separator + date;
 		try {
 			Path getPath = Paths.get(path);
 			Path file = getPath.resolve(filename);
@@ -114,7 +116,8 @@ public class MediaService {
 
 
 		String home = System.getProperty("user.home");
-		String filePath = home + File.separator + "clone" + File.separator + "images" + File.separator + username + File.separator + date;
+		String filePath =
+				home + File.separator + "clone" + File.separator + "images" + File.separator + username + File.separator + date;
 		try {
 			Path getPath = Paths.get(filePath);
 			Stream<Path> stream = Files.walk(getPath, 2).filter(path -> !path.equals(getPath)).map(getPath::relativize);

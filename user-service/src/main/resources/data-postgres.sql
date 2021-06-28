@@ -1,7 +1,16 @@
 
-INSERT INTO USERS (username, password, name, email, enabled, role, gender, birthday, website, bio, phone,privacy) VALUES ('user@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'User', 'isa59202021@gmail.com', true, 'USER', 'Male','2020/5/12', 'dadwdaw', 'qwdqdqd', '2212312312',true);
-INSERT INTO USERS (username, password, name, email, enabled, role, gender, birthday, website, bio, phone,privacy) VALUES ('user2@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'User', 'isa59202021@gmail.com', true, 'USER', 'Male','2020/5/12', 'dadwdaw', 'qwdqdqd', '2212312312',false);
-INSERT INTO USERS (username, password, name, email, enabled, role, gender, birthday, website, bio, phone,privacy) VALUES ('user3@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'User', 'isa59202021@gmail.com', true, 'USER', 'Male','2020/5/12', 'dadwdaw', 'qwdqdqd', '2212312312',false);
+INSERT INTO USERS (username, password, name, email, enabled, role, gender, birthday, website, bio, phone,privacy,
+verified, allow_messages, allow_tags)
+VALUES ('user@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'User', 'isa59202021@gmail.com',
+true, 'USER', 'Male','2020/5/12', 'dadwdaw', 'qwdqdqd', '2212312312',true, true, false, false);
+INSERT INTO USERS (username, password, name, email, enabled, role, gender, birthday, website, bio, phone,privacy,
+verified, allow_messages, allow_tags)
+VALUES ('user2@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'User', 'isa59202021@gmail.com',
+true, 'USER', 'Male','2020/5/12', 'dadwdaw', 'qwdqdqd', '2212312312',false,true, true, true);
+INSERT INTO USERS (username, password, name, email, enabled, role, gender, birthday, website, bio, phone,privacy,
+verified, allow_messages, allow_tags)
+VALUES ('user3@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'User', 'isa59202021@gmail.com',
+true, 'USER', 'Male','2020/5/12', 'dadwdaw', 'qwdqdqd', '2212312312',false,false,false,false);
 --INSERT INTO USERS (username, password, name, email, enabled, role) VALUES ('admin', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'Admin', 'isa59202021@gmail.com', true, 'ADMIN');
 --INSERT INTO USERS (username, password, name, email, enabled, role) VALUES ('admin2', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'Admin', 'isa59202021@gmail.com', true, 'ADMIN');
 
