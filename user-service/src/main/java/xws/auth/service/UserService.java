@@ -137,8 +137,12 @@ public class UserService implements UserDetailsService {
 			return userRepository.save(subject);
 		} else {
 			Set<String> following = issuer.getFollowing();
+			Set<String> userFollowers = subject.getUserFollowers();
 			following.add(subject.getUsername());
+			userFollowers.add(issuer.getUsername());
 			issuer.setFollowing(following);
+			subject.setUserFollowers(userFollowers);
+			userRepository.save(subject);
 			return userRepository.save(issuer);
 		}
 	}
@@ -149,12 +153,16 @@ public class UserService implements UserDetailsService {
 
 		Set<String> followers = subject.getFollowers();
 		Set<String> following = issuer.getFollowing();
+		Set<String> userFollowers = subject.getUserFollowers();
 
 		followers.remove(issuer.getUsername());
 		following.add(subject.getUsername());
+		userFollowers.add(issuer.getUsername());
+
 
 		issuer.setFollowing(following);
 		subject.setFollowers(followers);
+		subject.setUserFollowers(userFollowers);
 
 		userRepository.save(subject);
 		return userRepository.save(issuer);
@@ -176,7 +184,7 @@ public class UserService implements UserDetailsService {
 
 	public List<String> getFriends(String username) {
 		User user = userRepository.findByUsername(username);
-		Set<String> following = user.getFollowing();
+		Set<String> following = user.getUserFollowers();
 		List<String> usernames = new ArrayList<>();
 
 		for (String u : following) {

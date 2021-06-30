@@ -73,6 +73,9 @@ public class User implements UserDetails {
 	@ElementCollection
 	private Set<String> followers = new HashSet<>();
 
+	@ElementCollection
+	private Set<String> userFollowers = new HashSet<>();
+
 	@OneToMany
 	private List<Notifications> settings;
 
@@ -122,6 +125,14 @@ public class User implements UserDetails {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Set<String> getUserFollowers() {
+		return userFollowers;
+	}
+
+	public void setUserFollowers(Set<String> userFollowers) {
+		this.userFollowers = userFollowers;
 	}
 
 	public String getEmail() {
