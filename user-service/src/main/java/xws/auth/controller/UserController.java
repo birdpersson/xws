@@ -78,4 +78,10 @@ public class UserController {
 		return new ResponseEntity<>(userService.update(user), HttpStatus.CREATED);
 	}
 
+	@GetMapping("/getLoggedUser")
+	public ResponseEntity getLoggedUser(HttpServletRequest request){
+		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
+		return new ResponseEntity(username,HttpStatus.OK);
+	}
+
 }

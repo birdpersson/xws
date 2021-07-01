@@ -16,7 +16,8 @@ public class PostMapper {
         List<String> hashtags = p.getHashtags();
         List<String> mediaUrls = p.getMediaUrls();
         Date date = p.getCreated();
-        GetPostDTO dto = new GetPostDTO(id, username,location,description,hashtags, date,mediaUrls);
+        String postType = p.getPostType();
+        GetPostDTO dto = new GetPostDTO(id, username,location,description,hashtags, date,mediaUrls, postType);
 
         return dto;
     }

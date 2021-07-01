@@ -41,7 +41,7 @@ public class PostController {
 	@CrossOrigin
 	@GetMapping("/{username}")
 	public ResponseEntity<List<Post>> getAll(@PathVariable String username) {
-		return new ResponseEntity<>(postService.findAllByUsername(username), HttpStatus.OK);
+		return new ResponseEntity<>(postService.findAllPostsAndHighlightedStories(username), HttpStatus.OK);
 	}
 /*
 	@GetMapping("/{id}")
@@ -51,9 +51,13 @@ public class PostController {
 
 	@CrossOrigin
 	@PostMapping("/createPost")
-	public ResponseEntity<Post> createPost(@RequestBody PostDTO postDTO, HttpServletRequest request) {
+	public ResponseEntity createPost(@RequestBody PostDTO postDTO, HttpServletRequest request) {
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
-		return new ResponseEntity<>(postService.save(postDTO, username), HttpStatus.CREATED);
+		Post p = postService.save(postDTO,username);
+		UserCollection u = new UserCollection();
+		if(postDTO.getPostType().equals("story"))
+			u = collectionService.addtoStories(p,username);
+		return new ResponseEntity(u , HttpStatus.CREATED);
 	}
 
 	@GetMapping("/search/hashtags/{query}")

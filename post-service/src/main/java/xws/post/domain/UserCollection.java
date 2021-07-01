@@ -28,6 +28,9 @@ public class UserCollection {
 	@OneToMany
 	private Set<CustomCollection> collections = new HashSet<>();
 
+	@OneToMany
+	private Set<Post> stories = new HashSet<>();
+
 	public Long getId() {
 		return id;
 	}
@@ -76,4 +79,11 @@ public class UserCollection {
 		this.collections = collections;
 	}
 
+	public Set<Post> getStories() {
+		return stories;
+	}
+
+	public void setStories(Set<Post> stories) {
+		this.stories = stories;
+	}
 }

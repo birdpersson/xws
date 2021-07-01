@@ -11,8 +11,10 @@ public class GetPostDTO {
     private List<String> hashtags;
     private List<String> mediaUrls;
     private Date date;
+    private String postType;
 
-    public GetPostDTO(Long id, String username, String location, String description, List<String> hashtags, Date date, List<String> mediaUrls) {
+    public GetPostDTO(Long id, String username, String location, String description, List<String> hashtags, Date date
+            , List<String> mediaUrls, String postType) {
         this.id = id;
         this.username = username;
         this.location = location;
@@ -20,6 +22,7 @@ public class GetPostDTO {
         this.hashtags = hashtags;
         this.date = date;
         this.mediaUrls = mediaUrls;
+        this.postType = postType;
     }
 
     public Long getId() {
@@ -52,6 +55,14 @@ public class GetPostDTO {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getPostType() {
+        return postType;
+    }
+
+    public void setPostType(String postType) {
+        this.postType = postType;
     }
 
     public String getDescription() {

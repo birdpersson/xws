@@ -10,10 +10,7 @@ import xws.post.dto.GetPostDTO;
 import xws.post.dto.PostDTO;
 import xws.post.repository.PostRepository;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class PostService {
@@ -31,6 +28,27 @@ public class PostService {
 
 	public List<Post> findAllByUsername(String username) {
 		return postRepository.findAllByUsername(username);
+	}
+
+	public List<Post> findAllPostsAndHighlightedStories(String username) {
+		List<Post> posts = postRepository.findAllByUsername(username);
+		List<Post> postsAndStories = new ArrayList<>();
+		for(Post p : posts){
+			Date d = p.getCreated();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(d);
+			cal.add(Calendar.MINUTE,3);
+			Date added = cal.getTime();
+			if(p.getPostType().equals("story") && p.getHighlighted()){
+				if(added.after(new Date())) {
+					postsAndStories.add(p);
+				}
+			}
+			else if(p.getPostType().equals("post")){
+				postsAndStories.add(p);
+			}
+		}
+		return postsAndStories;
 	}
 
 	public List<String> searchHashtags(String query){ return postRepository.searchHashtag(query);}
@@ -102,6 +120,8 @@ public class PostService {
 	}
 
 	public List<GetPostDTO> getFollowingPosts(String username){
+
+
 		List<Post> posts = postRepository.findAll();
 		List<Post> sharedPosts = new ArrayList<>();
 		for(Post p : posts){
@@ -118,7 +138,22 @@ public class PostService {
 			Date date = p.getCreated();
 			List<String> hashtags = p.getHashtags();
 			List<String> media = p.getMediaUrls();
-			dto.add(new GetPostDTO(id, un, location, desc, hashtags, date, media));
+			String postType = p.getPostType();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.add(Calendar.MINUTE,3);
+			Date added = cal.getTime();
+
+			if(p.getPostType().equals("story")){
+				if(added.after(new Date())){
+					dto.add(new GetPostDTO(id, un, location, desc, hashtags, date, media,postType));
+				}
+			}
+			else{
+				dto.add(new GetPostDTO(id, un, location, desc, hashtags, date, media,postType));
+			}
+
+
 		}
 		return dto;
 	}

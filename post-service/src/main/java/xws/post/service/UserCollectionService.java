@@ -40,6 +40,15 @@ public class UserCollectionService {
 		return userCollectionRepository.save(c);
 	}
 
+	public UserCollection addtoStories(Post post, String username) {
+		UserCollection c = findByUsername(username);
+		Set<Post> stories = c.getStories();
+		if(!stories.contains(post))
+			stories.add(post);
+		c.setStories(stories);
+		return userCollectionRepository.save(c);
+	}
+
 	public UserCollection removeFromFavorites(Post post, String username) {
 		UserCollection c = findByUsername(username);
 		Set<Post> favorites = c.getFavorites();
