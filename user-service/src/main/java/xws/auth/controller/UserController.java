@@ -77,11 +77,11 @@ public class UserController {
 		user.setVerified(true); //TODO: move to service
 		return new ResponseEntity<>(userService.update(user), HttpStatus.CREATED);
 	}
-
+	@CrossOrigin
 	@GetMapping("/getLoggedUser")
 	public ResponseEntity getLoggedUser(HttpServletRequest request){
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
-		return new ResponseEntity(username,HttpStatus.OK);
+		return new ResponseEntity(userService.getUserByUsername(username),HttpStatus.OK);
 	}
 
 }
