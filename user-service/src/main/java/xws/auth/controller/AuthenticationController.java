@@ -51,7 +51,7 @@ public class AuthenticationController {
 
 		return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
 	}
-
+	@CrossOrigin
 	@GetMapping("/userInfo")
 	public ResponseEntity<ProfileDTO> getUserInfo(HttpServletRequest request){
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
@@ -60,7 +60,7 @@ public class AuthenticationController {
 		ProfileDTO info = ChangeInfoMapper.userToChangeInfo(user);
 		return ResponseEntity.ok(info);
 	}
-
+	@CrossOrigin
 	@PostMapping("/changeInfo")
 	public ResponseEntity changeInfo(@RequestBody ProfileDTO dto, HttpServletRequest request){
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
@@ -70,7 +70,7 @@ public class AuthenticationController {
 		for(User u : users){
 			usernames.add(u.getUsername());
 		}
-		if(usernames.contains(dto.getUsername())){
+		if(usernames.contains(dto.getUsername())&&(!username.equals(dto.getUsername()))){
 			return new ResponseEntity("Username already exists",HttpStatus.BAD_REQUEST);
 		}
 

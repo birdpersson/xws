@@ -15,6 +15,9 @@ public class ChangeInfoMapper {
         dto.setWebsite(user.getWebsite());
         dto.setEmail(user.getEmail());
         dto.setName(user.getName());
+        dto.setPrivacy(user.isPrivate());
+        dto.setAllowMessages(user.getAllowMessages());
+        dto.setAllowTags(user.getAllowTags());
 
         return dto;
     }
