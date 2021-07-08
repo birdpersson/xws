@@ -77,11 +77,24 @@ public class UserController {
 		user.setVerified(true); //TODO: move to service
 		return new ResponseEntity<>(userService.update(user), HttpStatus.CREATED);
 	}
+
 	@CrossOrigin
 	@GetMapping("/getLoggedUser")
 	public ResponseEntity getLoggedUser(HttpServletRequest request){
 		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
-		return new ResponseEntity(userService.getUserByUsername(username),HttpStatus.OK);
+		return new ResponseEntity(username,HttpStatus.OK);
+	}
+
+	@CrossOrigin
+	@GetMapping("/getFullLoggedUser")
+	public ResponseEntity getFullLoggedUser(HttpServletRequest request){
+		String username = tokenUtils.getUsernameFromToken(tokenUtils.getToken(request));
+		return new ResponseEntity(userService.findByUsername(username),HttpStatus.OK);
+	}
+
+	@GetMapping("/checkTags/{username}")
+	public ResponseEntity checkIfTagsAllowed(@PathVariable String username){
+		return new ResponseEntity(userService.checkIfTagsAllowed(username), HttpStatus.CREATED);
 	}
 
 }

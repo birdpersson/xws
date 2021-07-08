@@ -188,7 +188,8 @@ public class UserService implements UserDetailsService {
 		List<String> usernames = new ArrayList<>();
 
 		for (String u : following) {
-			usernames.add(u);
+			if(!user.getBlocked().contains(u))
+				usernames.add(u);
 		}
 
 		return usernames;
@@ -242,6 +243,13 @@ public class UserService implements UserDetailsService {
 
 	public List<User> findAll() {
 		return userRepository.findAll();
+	}
+
+	public boolean checkIfTagsAllowed(String username){
+		User user = userRepository.findByUsername(username);
+		if(user.getAllowTags())
+			return true;
+		return false;
 	}
 
 }
